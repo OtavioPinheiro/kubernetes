@@ -8,10 +8,14 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 4. [Comandos do Kubernets]()
 
 # O que é Kubernets?
-Kubernets é ...
+Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner.
+
+Referências: [Kubernetes](https://kubernetes.io/pt-br/)
 
 # O que é Kind?
-Kind é ...
+Kind é uma ferramenta para executar clusters Kubernetes locais usando "nós" de container do Docker. Foi projetado principalmente para testar o próprio Kubernetes, mas pode ser usada para desenvolvimento local ou CI.
+
+Referência: [Kind](https://kind.sigs.k8s.io/); [Zup](https://www.zup.com.br/blog/kind-cluster-kubernetes#:~:text=kind%20%C3%A9%20uma%20ferramenta%20para,ferramenta%20em%20seu%20site%20oficial.)
 
 # Instalação
 Para usar o Kubernets é necessário ...
