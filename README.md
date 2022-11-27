@@ -41,7 +41,7 @@ A seguir serão descritos alguns conceitos básicos a respeito do Kubernetes, Mi
 Referência: [*Pods*](#https://kubernetes.io/docs/concepts/workloads/pods/)
 
 
-# Instalação
+# Instalações
 Para usar o Kubernets é necessário ...
 
 # Comandos do Kubernets e do Kind
