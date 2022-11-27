@@ -5,8 +5,9 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 1. [O que é Kubernets?](#o-que-é-kubernets)
 2. [O que é Kind?](#o-que-é-kind)
 3. [O que é Minikube?](#o-que-é-minikube)
-4. [Instalação](#instalação)
-5. [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
+4. [Conceitos básicos]()
+5. [Instalação](#instalação)
+6. [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -23,6 +24,15 @@ Referência: [Kind](https://kind.sigs.k8s.io/); [Zup](https://www.zup.com.br/blo
 O Minikube é uma implementação leve do Kubernetes que cria uma VM em sua máquina local e implanta um cluster simples contendo apenas um nó. O Minikube está disponível para sistemas Linux, macOS e Windows. A linha de comando (cli) do Minikube fornece operações básicas de inicialização para trabalhar com seu cluster, incluindo iniciar, parar, status e excluir.
 
 Referência: [Minikube](https://kubernetes.io/pt-br/docs/tutorials/kubernetes-basics/create-cluster/cluster-intro/#:~:text=O%20Minikube%20%C3%A9%20uma%20implementa%C3%A7%C3%A3o,sistemas%20Linux%2C%20macOS%20e%20Windows.)
+
+
+# Conceitos báiscos
+A seguir serão descritos alguns conceitos básicos a respeito do Kubernetes, Minikube, Kind e sobre o ambiente de serviços distribuídos em contâiners.
+
+## O que é um POD?
+POD, no Kubernetes, trata-se de um ou mais contêineres agrupados para fins de administração e gerenciamento de rede. Os PODS são as menores unidades implantáveis de computação que você pode criar e gerenciar no Kubernetes.
+
+Referência: [PODs](#https://kubernetes.io/docs/concepts/workloads/pods/)
 
 
 # Instalação
