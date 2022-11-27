@@ -30,7 +30,7 @@ Referência: [Minikube](https://kubernetes.io/pt-br/docs/tutorials/kubernetes-ba
 A seguir serão descritos alguns conceitos básicos a respeito do Kubernetes, Minikube, Kind e sobre o ambiente de serviços distribuídos em contâiners.
 
 ## O que é um Pod?
-Pod, no Kubernetes, trata-se de um ou mais contêineres agrupados para fins de administração e gerenciamento de rede. Os PODS são as menores unidades implantáveis de computação que você pode criar e gerenciar no Kubernetes.
+Pod, no Kubernetes, trata-se de um ou mais contêineres agrupados para fins de administração e gerenciamento de rede. Os *Pods* são as menores unidades implantáveis de computação que você pode criar e gerenciar no Kubernetes.
 
 Referência: [Pods](#https://kubernetes.io/docs/concepts/workloads/pods/)
 
