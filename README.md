@@ -5,7 +5,7 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 1. [O que é Kubernets?](#o-que-é-kubernets)
 2. [O que é Kind?](#o-que-é-kind)
 3. [O que é Minikube?](#o-que-é-minikube)
-4. [Conceitos básicos]()
+4. [Conceitos básicos](#conceitos-básicos)
 5. [Instalação](#instalação)
 6. [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
 
@@ -26,7 +26,7 @@ O Minikube é uma implementação leve do Kubernetes que cria uma VM em sua máq
 Referência: [Minikube](https://kubernetes.io/pt-br/docs/tutorials/kubernetes-basics/create-cluster/cluster-intro/#:~:text=O%20Minikube%20%C3%A9%20uma%20implementa%C3%A7%C3%A3o,sistemas%20Linux%2C%20macOS%20e%20Windows.)
 
 
-# Conceitos báiscos
+# Conceitos básicos
 A seguir serão descritos alguns conceitos básicos a respeito do Kubernetes, Minikube, Kind e sobre o ambiente de serviços distribuídos em contâiners.
 
 ## O que é um Pod?
