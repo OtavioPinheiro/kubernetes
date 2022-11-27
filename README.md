@@ -15,6 +15,12 @@ Kubernets é um produto Open Source utilizado para automatizar a implantação, 
 Referências: [Kubernetes](https://kubernetes.io/pt-br/)
 Para saber mais: [O que é Kubernetes?](https://kubernetes.io/pt-br/docs/concepts/overview/what-is-kubernetes/)
 
+## O que o Kubernetes pode fazer?
+
+
+## O que o Kubernetes não é
+
+
 # O que é Kind?
 Kind é uma ferramenta para executar clusters Kubernetes locais usando "nós" de container do Docker. Foi projetado principalmente para testar o próprio Kubernetes, mas pode ser usada para desenvolvimento local ou CI.
 
