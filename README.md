@@ -4,18 +4,23 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 ## Sumário
 1. [O que é Kubernets?](#o-que-é-kubernets)
 2. [O que é Kind?](#o-que-é-kind)
-3. [Instalação]()
-4. [Comandos do Kubernets]()
+3. [O que é Minikube?](#o-que-é-minikube)
+4. [Instalação](#instalação)
+5. [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
 
 # O que é Kubernets?
-Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner.
+Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
 
 Referências: [Kubernetes](https://kubernetes.io/pt-br/)
+Para saber mais: [O que é Kubernetes?](https://kubernetes.io/pt-br/docs/concepts/overview/what-is-kubernetes/)
 
 # O que é Kind?
 Kind é uma ferramenta para executar clusters Kubernetes locais usando "nós" de container do Docker. Foi projetado principalmente para testar o próprio Kubernetes, mas pode ser usada para desenvolvimento local ou CI.
 
 Referência: [Kind](https://kind.sigs.k8s.io/); [Zup](https://www.zup.com.br/blog/kind-cluster-kubernetes#:~:text=kind%20%C3%A9%20uma%20ferramenta%20para,ferramenta%20em%20seu%20site%20oficial.)
+
+# O que é Minikube?
+
 
 # Instalação
 Para usar o Kubernets é necessário ...
