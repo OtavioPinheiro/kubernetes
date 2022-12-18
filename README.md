@@ -63,7 +63,58 @@ Cada *Pod* é feito com o objetivo de rodar (executar) apenas uma única instân
 Referência: [*Pods*](#https://kubernetes.io/docs/concepts/workloads/pods/)
 
 # Instalações
-Para usar o Kubernets é necessário ...
+Para usar o Kubernets é necessário instalar o kubectl. Recomenda-se sempre utilizar a versão mais atualizada do kubectl para evitar problemas.
+
+Independente do sistema operacional, há pelo menos duas maneiras de se instalar o kubectl, baixando o arquivo binário utilizando o comando `curl` ou utlizando um gerenciador de pacotes.
+
+## Instalação no Windows
+Utilizando o [Chocolatey](https://chocolatey.org/) para realizar a instalação do kubectl. Execute os seguintes comandos na ordem:
+1. `choco install kubernetes-cli`
+2. Verifique se a versão instalada é a mais atual: <br> `kubectl version --client`
+3. Navegue até o diretório home, normalmente `C:\Users\<user-name>`.<br>`cd ~`
+4. Crie um diretório .kube: `mkdir .kube`
+5. Mude para o diretório: `cd .kube`
+6. Configure o kubectl para usar um *cluster* remoto do Kubernetes: `New-Item config -type file`
+7. Verifique se o kubectl está devidamente configurado, verificando o estado do *cluster*: `kubectl cluster-info`. Se receber uma URL como resposta, então o kubectl está corretamente configurado para acessar o *cluster*.
+
+Para mais informações ou outras formas de instalar o kubectl, acesse: https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/ 
+
+## Instalação no Linux
+Utilizando uma distribuição Linux baseada em Debian e utilizando o gerenciador de pacotes padrão apt, siga os passos a seguir para instalar o kubectl:
+1. Atualize o índice do pacote `apt` e instale os pacotes necessários para usar o repositório `apt` Kubernetes.
+   ```
+    sudo apt-get update
+    sudo apt-get install -y ca-certificates curl
+   ```
+   Em casos de sistemas operacionais Debian ou distribuições baseadas em versões anteriores ao Debian 9, também será necessário instalar o `apt-transport-https`.
+   ```
+    sudo apt-get install -y apt-transport-https
+   ```
+2. Baixe a chave de assinatura pública do Google Cloud:
+   ```
+    sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyrings.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+   ```
+3. Adicionar o Kubernetes ao repositório:
+   ```
+    echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   ```
+4. Atualize o índice do pacote com o novo repositório e instale o kubectl:
+   ```
+    sudo apt-get update
+    sudo apt-get install -y kubectl
+   ```
+5. Verifique se o kubectl está devidamente configurado, verificando o estado do *cluster*: `kubectl cluster-info`. Se receber uma URL como resposta, então o kubectl está corretamente configurado para acessar o *cluster*.
+
+Para mais informações ou outras maneiras de instalar o kubectl em distribuições Linux, acesse: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+
+## Instalação no MacOS
+Para instalar o kubectl em sistemas MacOS utilizando o gerenciador de pacotes [Homebrew](https://brew.sh/), siga os passos a seguir:
+1. Execute o comando de instalação: `brew install kubectl` ou `brew install kubernetes-cli`.
+2. Faça um teste para garantir que a versão instalada está atualizada: `kubectl version --client`
+3. Verifique se o kubectl está devidamente configurado, verificando o estado do *cluster*: `kubectl cluster-info`. Se receber uma URL como resposta, então o kubectl está corretamente configurado para acessar o *cluster*.
+
+Para mais informações ou outras maneiras de instalar o kubectl em sistemas MacOS, acesse: https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/ 
+
 
 # Comandos do Kubernets e do Kind
 Tabela de comandos do Kubernets
