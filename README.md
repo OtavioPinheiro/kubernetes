@@ -8,6 +8,8 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 4. [Conceitos básicos](#conceitos-básicos)
 5. [Instalação](#instalação)
 6. [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
+7. [Dicas]()
+8. [Para lembrar]()
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -179,3 +181,22 @@ Tabela de comandos do Kubernets
 | `kubectl port-forward pod/<pod-name> <host-port>:<pod-port>` |  |
 | `kubectl port-forward svc/<service-name> <host-port>:<service-port>`|  |
 | `kubectl proxy --port=8080` |  |
+
+
+# Dicas
+
+# Para lembrar
+- Para criar um pod ou qualquer objeto Kubernetes utilizamos os arquivos .yaml (ou .yml) para passar as especificações e depois executar o comando `kubectl apply -f <filepath>` para efetivamente criar o objeto Kubernetes.
+- *ReplicaSet* é um objeto Kubernetes que ajuda o gerenciamento dos *Pods* e de suas replicas. A vantagem é que caso um *Pod* caia, o *ReplicaSet* irá construir o *Pod* novamente.
+- As *labels* (propriedade definida no arquivo .yml do objeto Kubernetes) são importantes para facilitar as buscas pelo objeto Kubernetes.
+  - Problema do *ReplicaSet* é quando atualizamos a imagem na qual ele se basea para criar os contêineres dos *pods*, pois o *ReplicaSet* não cria atomaticamente novos *pods* com a nova imagem fornecida, é necessário excluir cada um dos *pods* do *ReplicaSet*.
+  - Para solucionar/contornar o problema do *ReplicaSet* precisamos usar outro objeto do Kubernetes, o *Deployment*.
+- O *selector*, uma propriedade definida dentro da propriedade *spec* do objeto Kubernetes, é um seletor de *labels* que consegue selecionar apenas as *labels* com determinadas especificações.
+  Exemplo:
+    ``` k8s
+    spec:
+        selector:
+            matchLabels:
+                app: goserver
+    ```
+- Ordem de grandeza dos objetos Kubernetes: Deployment > ReplicaSet > Pods
