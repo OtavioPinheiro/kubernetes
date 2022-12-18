@@ -212,4 +212,4 @@ Tabela de comandos do Kubernets
     ```
 - Ordem de grandeza dos objetos Kubernetes: *Deployments* > *ReplicaSets* > *Pods*
 - Quando os *Deployments* estão realizando a atualização dos *ReplicaSets* e dos *Pods*, há um tempo de zero *downtime*, ou seja, sua aplicação não ficará fora do ar durante esse período de atualização, pois ela é feita de maneira progressiva.
-- 
+  - O *ReplicaSet* não será deletado, será criado um novo *ReplicaSet* e o antigo ficará sem nenhum *Pod*, ou seja, ficará vazio.
