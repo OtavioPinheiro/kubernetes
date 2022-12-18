@@ -12,8 +12,11 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
 
-Referências: [Kubernetes](https://kubernetes.io/pt-br/)
-Para saber mais: [O que é Kubernetes?](https://kubernetes.io/pt-br/docs/concepts/overview/what-is-kubernetes/)
+**Referências:**
+- [Kubernetes](https://kubernetes.io/pt-br/)
+
+**Para saber mais:**
+- [O que é Kubernetes?](https://kubernetes.io/pt-br/docs/concepts/overview/what-is-kubernetes/)
 
 ## O que o Kubernetes pode fazer?
 Os benefícios de ser utilizar o Kubernetes são, basicamente, o escalonamento, recuperação à falha e sistemas distribuídos de forma resiliente. Além disso, o Kubernetes oferece:
@@ -40,12 +43,49 @@ Os benefícios de ser utilizar o Kubernetes são, basicamente, o escalonamento, 
 # O que é Kind?
 Kind é uma ferramenta para executar *clusters* Kubernetes locais usando "nós" de container do Docker. Foi projetado principalmente para testar o próprio Kubernetes, mas pode ser usada para desenvolvimento local ou CI.
 
-Referência: [Kind](https://kind.sigs.k8s.io/); [Zup](https://www.zup.com.br/blog/kind-cluster-kubernetes#:~:text=kind%20%C3%A9%20uma%20ferramenta%20para,ferramenta%20em%20seu%20site%20oficial.)
+Para instalar o *kind* siga os passos descritos [aqui](https://www.zup.com.br/blog/kind-cluster-kubernetes#:~:text=kind%20%C3%A9%20uma%20ferramenta%20para,ferramenta%20em%20seu%20site%20oficial.).
+
+Em resumo os passos são:
+```
+    sudo curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
+    sudo chmod +x ./kind
+    sudo mv ./kind /usr/bin/kind
+```
+
+**Referência:**
+- [Kind](https://kind.sigs.k8s.io/);
+- [Zup](https://www.zup.com.br/blog/kind-cluster-kubernetes#:~:text=kind%20%C3%A9%20uma%20ferramenta%20para,ferramenta%20em%20seu%20site%20oficial.)
 
 # O que é Minikube?
 O Minikube é uma implementação leve do Kubernetes que cria uma VM em sua máquina local e implanta um cluster simples contendo apenas um nó. O Minikube está disponível para sistemas Linux, macOS e Windows. A linha de comando (cli) do Minikube fornece operações básicas de inicialização para trabalhar com seu cluster, incluindo iniciar, parar, status e excluir.
 
-Referência: [Minikube](https://kubernetes.io/pt-br/docs/tutorials/kubernetes-basics/create-cluster/cluster-intro/#:~:text=O%20Minikube%20%C3%A9%20uma%20implementa%C3%A7%C3%A3o,sistemas%20Linux%2C%20macOS%20e%20Windows.)
+Para instalar o *MiniKube* siga os passos descritos [aqui](https://minikube.sigs.k8s.io/docs/start/)
+
+Em resumo:
+- Para Windows: A maneira mais simples é baixar o executável (.exe) do *Minikube* ou executar os comandos:
+    ```
+        New-Item -Path 'c:\' -Name 'minikube' -ItemType Directory -Force
+        Invoke-WebRequest -OutFile 'c:\minikube\minikube.exe' -Uri 'https://github.com/kubernetes/minikube/releases/latest/download/minikube-windows-amd64.exe' -UseBasicParsing
+
+        $oldPath = [Environment]::GetEnvironmentVariable('Path', [EnvironmentVariableTarget]::Machine)
+        if ($oldPath.Split(';') -inotcontains 'C:\minikube'){ `
+            [Environment]::SetEnvironmentVariable('Path', $('{0};C:\minikube' -f $oldPath), [EnvironmentVariableTarget]::Machine) `
+        }
+    ```
+- Para Linux, executar o comando:
+    ```
+        curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+        sudo install minikube-linux-amd64 /usr/local/bin/minikube
+    ```
+- Para MacOS, executar o comando:
+    ```
+        curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
+        sudo install minikube-darwin-amd64 /usr/local/bin/minikube
+    ```
+
+**Referência:**
+- [Minikube](https://kubernetes.io/pt-br/docs/tutorials/kubernetes-basics/create-cluster/cluster-intro/#:~:text=O%20Minikube%20%C3%A9%20uma%20implementa%C3%A7%C3%A3o,sistemas%20Linux%2C%20macOS%20e%20Windows.);
+- [Minikube/Documentação](https://minikube.sigs.k8s.io/docs/start/)
 
 
 # Conceitos básicos
@@ -60,7 +100,8 @@ A seguir serão descritos alguns conceitos básicos a respeito do Kubernetes, Mi
 
 Cada *Pod* é feito com o objetivo de rodar (executar) apenas uma única instância de uma dada aplicação. Para escalar a aplicação horizontalmente, oferecer mais recursos gerais executando mais instâncias, deve-se usar múltiplos *Pods*, um para cada instância. No Kubernetes isso é referenciado como "replicação". *Pods* replicados geralmente são criados e gerenciados como um grupo pelo recurso de carga de trabalho (*workload*) e seu controlador.
 
-Referência: [*Pods*](#https://kubernetes.io/docs/concepts/workloads/pods/)
+**Referência:**
+- [*Pods*](#https://kubernetes.io/docs/concepts/workloads/pods/)
 
 # Instalações
 Para usar o Kubernets é necessário instalar o kubectl. Recomenda-se sempre utilizar a versão mais atualizada do kubectl para evitar problemas.
