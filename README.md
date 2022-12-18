@@ -52,6 +52,8 @@ Em resumo os passos são:
     sudo mv ./kind /usr/bin/kind
 ```
 
+Outros métodos de instalação são apresentados [aqui](https://kind.sigs.k8s.io/).
+
 **Referência:**
 - [Kind](https://kind.sigs.k8s.io/);
 - [Zup](https://www.zup.com.br/blog/kind-cluster-kubernetes#:~:text=kind%20%C3%A9%20uma%20ferramenta%20para,ferramenta%20em%20seu%20site%20oficial.)
