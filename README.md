@@ -166,21 +166,32 @@ Tabela de comandos do Kubernets
 
 | Comando | Para que serve |
 |---------|----------------|
-| `kind create cluster --config=k8s/kind.yaml --name=fullcycle` |  |
-| `kubectl cluster-info --context kind-fullcycle` |  |
-| `kubectl config get-clusters` |  |
-| `kind get clusters` | Comando usado para retornar uma lista de clusters que estão ativos. |
-| `kind delete clusters <cluster-name>` |  |
+| `kind create cluster --config=k8s/kind.yaml --name=fullcycle` | Comando usado para criar um cluster utilizando um arquivo para configuração passado na *flag* *config* com o nome definido pela *flag* *name*. |
+| `kubectl cluster-info --context kind-fullcycle` | Exibe as informações do cluster com o nome (contexto) informado pela flag *context*. |
+| `kubectl config get-clusters` | Comando usado para exibir uma list dos *clusters*. |
+| `kubectl config get-contexts` | Comando usado para exibir uma lista dos contextos. |
+| `kind get clusters` | Comando usado para retornar uma lista de *clusters* que estão ativos. |
+| `kind delete clusters <cluster-name>` | Comando usado para deletar *clusters* pelo nome. |
 | `kubectl apply -f <filepath>` | Comando usado para executar determinadas especificações descritas em um arquivo. |
+| `kubectl get deployments` | Comando usado para retornar uma lista dos *deployments* sendo executados. |
 | `kubectl get replicasets` | Comando usado para retornar uma lista de replicas. |
 | `kubectl get services` | Comando usado para retornar uma lista de serviços. |
-| `kubectl rollout history deployment goserver` |  |
-| `kubectl rollout undo deployment <nome-do-deploy> --> volta para a última versão` |  |
-| `kubectl rollout undo deployment <deploy-name> --to-revision=<revision-number>` |  |
-| `kubectl describe pod <pod-name>` |  |
-| `kubectl port-forward pod/<pod-name> <host-port>:<pod-port>` |  |
-| `kubectl port-forward svc/<service-name> <host-port>:<service-port>`|  |
-| `kubectl proxy --port=8080` |  |
+| `kubectl get pod` | Comando usado para retornar uma lista dos *pods* sendo executados. |
+| `kubectl get pods` | Comando usado para retornar uma lista dos *pods* sendo executados. |
+| `kubectl rollout history deployment goserver` | Verifica o histórico dos *Deployments* incluindo revisões. |
+| `kubectl rollout undo deployment <nome-do-deploy>` | Retorna para a última versão do *Deployment*. |
+| `kubectl rollout undo deployment <deploy-name> --to-revision=<revision-number>` | Retorna para uma revisão específica. |
+| `kubectl rollout status -w <deployment>` | Monitora o status de atualização da implantação (*deployment*) especificada até a conclusão. |
+| `kubectl rollout restart <deployment>` | Reinicializa a implantação (*deployment*) especificada. |
+| `kubectl describe pod <pod-name>` | Comando usado para descrever um *Pod*. Esse comando exibe as informações do *Pod* especificado. |
+| `kubectl port-forward pod/<pod-name> <host-port>:<pod-port>` | Comando usado para definir a porta que será usada pelo *host* e pelo *pod* (mapeamento/redirecionamento de portas). |
+| `kubectl port-forward svc/<service-name> <host-port>:<service-port>`| Comando usado para definir a porta que será usada pelo *host* e pelo serviço (*service*) (mapeamento/redirecionamento de portas). |
+| `kubectl proxy --port=8080` | Inicia um servidor proxy para o servidor API do Kubernete na porta especificada. |
+| `kubectl delete replicaset <replicaset-name>` | Deleta um **ReplicaSet** pelo nome. |
+
+**Para saber mais**: 
+- [kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
+- [Use an HTTP Proxy to Access the Kubernetes API](https://kubernetes.io/docs/tasks/extend-kubernetes/http-proxy-access-api/)
 
 
 # Dicas
@@ -199,4 +210,6 @@ Tabela de comandos do Kubernets
             matchLabels:
                 app: goserver
     ```
-- Ordem de grandeza dos objetos Kubernetes: Deployment > ReplicaSet > Pods
+- Ordem de grandeza dos objetos Kubernetes: *Deployments* > *ReplicaSets* > *Pods*
+- Quando os *Deployments* estão realizando a atualização dos *ReplicaSets* e dos *Pods*, há um tempo de zero *downtime*, ou seja, sua aplicação não ficará fora do ar durante esse período de atualização, pois ela é feita de maneira progressiva.
+- 
