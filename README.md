@@ -3,15 +3,16 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 
 ## Sumário
 1. [O que é Kubernets?](#o-que-é-kubernets)
-2. [O que é Kind?](#o-que-é-kind)
-3. [O que é Minikube?](#o-que-é-minikube)
-4. [Conceitos básicos](#conceitos-básicos)
-5. [O que é um pod?](#o-que-é-um-pod)
-6. [O que é um cluster](#o-que-é-um-cluster)
-7. [Instalações](#instalações)
-8. [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
-9. [Dicas](#dicas)
-10. [Para lembrar](#para-lembrar)
+2. [Tipos de serviços no Kubernetes](#tipos-de-serviços-no-kubernetes)
+3. [O que é Kind?](#o-que-é-kind)
+4. [O que é Minikube?](#o-que-é-minikube)
+5. [Conceitos básicos](#conceitos-básicos)
+6. [O que é um pod?](#o-que-é-um-pod)
+7. [O que é um cluster](#o-que-é-um-cluster)
+8. [Instalações](#instalações)
+9. [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
+10. [Dicas](#dicas)
+11. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -46,11 +47,34 @@ Os benefícios de ser utilizar o Kubernetes são, basicamente, o escalonamento, 
 
 **FONTE:** [Kubernetes - Documentação](https://kubernetes.io/pt-br/docs/concepts/overview/what-is-kubernetes/)
 
-## Tipos de serviços no Kubernetes
-No Kubernetes existem, basicamente, quatro(4) tipos de serviços: [ClusterIP](), [NodePort](), [LoadBalancer]() e [ExternalName](). Vamos falar de cada um desses serviços, mas antes vamos entender o que é um serviço no Kubernetes.
+[Voltar para o sumário](#sumário)
 
-### O que é um serviço no Kubernetes?
-Um [*Service*](https://kubernetes.io/docs/concepts/services-networking/service/) (serviço) agrupa um conjunto de endpoints de [*pod*](#o-que-é-um-pod) em um único recurso. Existem várias maneiras de acessar esse agrupamento, mas, por padrão, é através de um endereço IP do [*cluster*]()
+# Tipos de serviços no Kubernetes
+No Kubernetes existem, basicamente, cinco(5) tipos de serviços: 
+- [ClusterIP](): os clientes internos enviam solicitações para um endereço IP interno estável.
+- [NodePort](): os clientes enviam solicitações para o endereço IP de um nó em um ou mais valores nodePort especificados pelo serviço.
+- [LoadBalancer](): os clientes enviam solicitações para o endereço IP de um balanceador de carga de rede.
+- [ExternalName](): os clientes internos usam o nome DNS de um serviço como um alias para um nome DNS externo.
+- [Headless](): use um serviço sem comando (*Headless*) quando quiser um agrupamento de *pods*, mas sem precisar de um endereço IP estável.
+
+O tipo **NodePort** é uma extensão do tipo **ClusterIP**. Portanto, um serviço do tipo **NodePort** tem um endereço IP de *cluster*. O tipo **LoadBalancer** é uma extensão do tipo **NodePort**. Portanto, um *Service* do tipo **LoadBalancer** tem um endereço IP de *cluster* e um ou mais valores **NodePort**.
+
+Vamos falar de cada um desses serviços, mas antes vamos entender o que é um serviço no Kubernetes.
+
+## O que é um serviço no Kubernetes?
+Um [*Service*](https://kubernetes.io/docs/concepts/services-networking/service/) (serviço) agrupa um conjunto de endpoints de [*pod*](#o-que-é-um-pod) em um único recurso. Existem várias maneiras de acessar esse agrupamento, mas, por padrão, é através de um endereço IP do [*cluster*](#o-que-é-um-cluster) que os clientes conseguem acessar os *pods* nos serviços. Um cliente envia uma solicitação ao endereço IP estável e a solicitação é encaminhada a um dos *pods* no serviço. Um serviço identifica seus *pods* membro com um seletor. Para que um pod seja membro do serviço, ele precisa ter todos os rótulos especificados no seletor. Um [rótulo](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) é um par de chave-valor arbitrário anexado a um objeto.
+
+### Por que usar um serviço do Kubernetes?
+Em um *cluster* do Kubernetes, cada pod tem um endereço IP interno. Mas, em uma implantação, os *pods* vêm e vão, e seus endereços IP mudam. Portanto, não faz sentido usar os endereços IP do *pod* diretamente. Com um serviço, você recebe um endereço IP estável válido durante a vida útil do serviço, mesmo quando os endereços IP dos *pods* membro são alterados.
+
+Um serviço também fornece balanceamento de carga. Os clientes chamam um endereço IP único e estável, e suas solicitações são balanceadas nos *pods* que são membros do serviço.
+
+**Referências**
+- [Google cloud - Serviços Kubernetes](https://cloud.google.com/kubernetes-engine/docs/concepts/service)
+- [Kubernetes - Services](https://kubernetes.io/docs/concepts/services-networking/service/)
+- [Kubernetes - Labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+
+[Voltar para o sumário](#sumário)
 
 # O que é Kind?
 Kind é uma ferramenta para executar *clusters* Kubernetes locais usando "nós" de container do Docker. Foi projetado principalmente para testar o próprio Kubernetes, mas pode ser usada para desenvolvimento local ou CI.
@@ -249,5 +273,6 @@ Tabela de comandos do Kubernets
 - Ordem de grandeza dos objetos Kubernetes: *Deployments* > *ReplicaSets* > *Pods*
 - Quando os *Deployments* estão realizando a atualização dos *ReplicaSets* e dos *Pods*, há um tempo de zero *downtime*, ou seja, sua aplicação não ficará fora do ar durante esse período de atualização, pois ela é feita de maneira progressiva.
   - O *ReplicaSet* não será deletado, será criado um novo *ReplicaSet* e o antigo ficará sem nenhum *Pod*, ou seja, ficará vazio.
+- Um rótulo é um par de chave-valor arbitrário anexado a um objeto.
 
 [Voltar para o sumário](#sumário)
