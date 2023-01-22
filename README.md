@@ -6,10 +6,12 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 2. [O que é Kind?](#o-que-é-kind)
 3. [O que é Minikube?](#o-que-é-minikube)
 4. [Conceitos básicos](#conceitos-básicos)
-5. [Instalação](#instalação)
-6. [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
-7. [Dicas](#dicas)
-8. [Para lembrar](#para-lembrar)
+5. [O que é um pod?](#o-que-é-um-pod)
+6. [O que é um cluster](#o-que-é-um-cluster)
+7. [Instalações](#instalações)
+8. [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
+9. [Dicas](#dicas)
+10. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -115,7 +117,7 @@ A seguir serão descritos alguns conceitos básicos a respeito do Kubernetes, Mi
 
 Cada *Pod* é feito com o objetivo de rodar (executar) apenas uma única instância de uma dada aplicação. Para escalar a aplicação horizontalmente, oferecer mais recursos gerais executando mais instâncias, deve-se usar múltiplos *Pods*, um para cada instância. No Kubernetes isso é referenciado como "replicação". *Pods* replicados geralmente são criados e gerenciados como um grupo pelo recurso de carga de trabalho (*workload*) e seu controlador.
 
-**Referência:**
+**Referências:**
 - [*Pods*](#https://kubernetes.io/docs/concepts/workloads/pods/)
 
 [Voltar para o sumário](#sumário)
@@ -127,6 +129,12 @@ Cada *Pod* é feito com o objetivo de rodar (executar) apenas uma única instân
 - Implementações de atualizações
 
 Já os nós de trabalho são responsáveis por executar as tarefas atribuidas pelo nó mestre. Deve haver pelo menos um nó mestre (ou nó principal) e um nó de trabalho para que o *cluster* possa operar.
+
+**Referências:**
+- [*Cluster*](https://www.vmware.com/br/topics/glossary/content/kubernetes-cluster.html#:~:text=Um%20cluster%20de%20Kubernetes%20%C3%A9,flex%C3%ADveis%20que%20as%20m%C3%A1quinas%20virtuais.)
+
+[Voltar para o sumário](#sumário)
+
 
 # Instalações
 Para usar o Kubernets é necessário instalar o kubectl. Recomenda-se sempre utilizar a versão mais atualizada do kubectl para evitar problemas.
