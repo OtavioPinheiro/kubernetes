@@ -44,6 +44,12 @@ Os benefícios de ser utilizar o Kubernetes são, basicamente, o escalonamento, 
 
 **FONTE:** [Kubernetes - Documentação](https://kubernetes.io/pt-br/docs/concepts/overview/what-is-kubernetes/)
 
+## Tipos de serviços no Kubernetes
+No Kubernetes existem, basicamente, quatro(4) tipos de serviços: [ClusterIP](), [NodePort](), [LoadBalancer]() e [ExternalName](). Vamos falar de cada um desses serviços, mas antes vamos entender o que é um serviço no Kubernetes.
+
+### O que é um serviço no Kubernetes?
+Um [*Service*](https://kubernetes.io/docs/concepts/services-networking/service/) (serviço) agrupa um conjunto de endpoints de [*pod*](#o-que-é-um-pod) em um único recurso. Existem várias maneiras de acessar esse agrupamento, mas, por padrão, é através de um endereço IP do [*cluster*]()
+
 # O que é Kind?
 Kind é uma ferramenta para executar *clusters* Kubernetes locais usando "nós" de container do Docker. Foi projetado principalmente para testar o próprio Kubernetes, mas pode ser usada para desenvolvimento local ou CI.
 
@@ -113,6 +119,14 @@ Cada *Pod* é feito com o objetivo de rodar (executar) apenas uma única instân
 - [*Pods*](#https://kubernetes.io/docs/concepts/workloads/pods/)
 
 [Voltar para o sumário](#sumário)
+
+## O que é um cluster?
+*Cluster*, no Kubernetes, é um conjunto de nós (*nodes*) que executam aplicativos em contêineres. Os *clusters* são compostos por um nó mestre e vários nós de trabalho, sendo que estes nós podem ser computadores físicos ou máquinas virtuais. A função do nó mestre é controlar o estado do *cluster* e fornece todas as atribuições de tarefas, coordenando processos como:
+- Agendamento e dimensionamento de aplicativos
+- Manutenção do estado de um *cluster*
+- Implementações de atualizações
+
+Já os nós de trabalho são responsáveis por executar as tarefas atribuidas pelo nó mestre. Deve haver pelo menos um nó mestre (ou nó principal) e um nó de trabalho para que o *cluster* possa operar.
 
 # Instalações
 Para usar o Kubernets é necessário instalar o kubectl. Recomenda-se sempre utilizar a versão mais atualizada do kubectl para evitar problemas.
