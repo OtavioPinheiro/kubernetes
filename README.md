@@ -8,8 +8,8 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 4. [Conceitos básicos](#conceitos-básicos)
 5. [Instalação](#instalação)
 6. [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
-7. [Dicas]()
-8. [Para lembrar]()
+7. [Dicas](#dicas)
+8. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -19,6 +19,8 @@ Kubernets é um produto Open Source utilizado para automatizar a implantação, 
 
 **Para saber mais:**
 - [O que é Kubernetes?](https://kubernetes.io/pt-br/docs/concepts/overview/what-is-kubernetes/)
+
+[Voltar para o sumário](#sumário)
 
 ## O que o Kubernetes pode fazer?
 Os benefícios de ser utilizar o Kubernetes são, basicamente, o escalonamento, recuperação à falha e sistemas distribuídos de forma resiliente. Além disso, o Kubernetes oferece:
@@ -60,6 +62,8 @@ Outros métodos de instalação são apresentados [aqui](https://kind.sigs.k8s.i
 - [Kind](https://kind.sigs.k8s.io/);
 - [Zup](https://www.zup.com.br/blog/kind-cluster-kubernetes#:~:text=kind%20%C3%A9%20uma%20ferramenta%20para,ferramenta%20em%20seu%20site%20oficial.)
 
+[Voltar para o sumário](#sumário)
+
 # O que é Minikube?
 O Minikube é uma implementação leve do Kubernetes que cria uma VM em sua máquina local e implanta um cluster simples contendo apenas um nó. O Minikube está disponível para sistemas Linux, macOS e Windows. A linha de comando (cli) do Minikube fornece operações básicas de inicialização para trabalhar com seu cluster, incluindo iniciar, parar, status e excluir.
 
@@ -91,6 +95,7 @@ Em resumo:
 - [Minikube](https://kubernetes.io/pt-br/docs/tutorials/kubernetes-basics/create-cluster/cluster-intro/#:~:text=O%20Minikube%20%C3%A9%20uma%20implementa%C3%A7%C3%A3o,sistemas%20Linux%2C%20macOS%20e%20Windows.);
 - [Minikube/Documentação](https://minikube.sigs.k8s.io/docs/start/)
 
+[Voltar para o sumário](#sumário)
 
 # Conceitos básicos
 A seguir serão descritos alguns conceitos básicos a respeito do Kubernetes, Minikube, Kind e sobre o ambiente de serviços distribuídos em contêineres.
@@ -106,6 +111,8 @@ Cada *Pod* é feito com o objetivo de rodar (executar) apenas uma única instân
 
 **Referência:**
 - [*Pods*](#https://kubernetes.io/docs/concepts/workloads/pods/)
+
+[Voltar para o sumário](#sumário)
 
 # Instalações
 Para usar o Kubernets é necessário instalar o kubectl. Recomenda-se sempre utilizar a versão mais atualizada do kubectl para evitar problemas.
@@ -160,6 +167,7 @@ Para instalar o kubectl em sistemas MacOS utilizando o gerenciador de pacotes [H
 
 Para mais informações ou outras maneiras de instalar o kubectl em sistemas MacOS, acesse: https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/ 
 
+[Voltar para o sumário](#sumário)
 
 # Comandos do Kubernets e do Kind
 Tabela de comandos do Kubernets
@@ -194,8 +202,12 @@ Tabela de comandos do Kubernets
 - [kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
 - [Use an HTTP Proxy to Access the Kubernetes API](https://kubernetes.io/docs/tasks/extend-kubernetes/http-proxy-access-api/)
 
+[Voltar para o sumário](#sumário)
 
 # Dicas
+
+
+[Voltar para o sumário](#sumário)
 
 # Para lembrar
 - Para criar um pod ou qualquer objeto Kubernetes utilizamos os arquivos .yaml (ou .yml) para passar as especificações e depois executar o comando `kubectl apply -f <filepath>` para efetivamente criar o objeto Kubernetes.
@@ -214,3 +226,5 @@ Tabela de comandos do Kubernets
 - Ordem de grandeza dos objetos Kubernetes: *Deployments* > *ReplicaSets* > *Pods*
 - Quando os *Deployments* estão realizando a atualização dos *ReplicaSets* e dos *Pods*, há um tempo de zero *downtime*, ou seja, sua aplicação não ficará fora do ar durante esse período de atualização, pois ela é feita de maneira progressiva.
   - O *ReplicaSet* não será deletado, será criado um novo *ReplicaSet* e o antigo ficará sem nenhum *Pod*, ou seja, ficará vazio.
+
+[Voltar para o sumário](#sumário)
