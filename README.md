@@ -51,11 +51,11 @@ Os benefícios de ser utilizar o Kubernetes são, basicamente, o escalonamento, 
 
 # Tipos de serviços no Kubernetes
 No Kubernetes existem, basicamente, cinco(5) tipos de serviços: 
-- [ClusterIP](): os clientes internos enviam solicitações para um endereço IP interno estável.
-- [NodePort](): os clientes enviam solicitações para o endereço IP de um nó em um ou mais valores nodePort especificados pelo serviço.
-- [LoadBalancer](): os clientes enviam solicitações para o endereço IP de um balanceador de carga de rede.
-- [ExternalName](): os clientes internos usam o nome DNS de um serviço como um alias para um nome DNS externo.
-- [Headless](): use um serviço sem comando (*Headless*) quando quiser um agrupamento de *pods*, mas sem precisar de um endereço IP estável.
+- [ClusterIP](#clusterip): os clientes internos enviam solicitações para um endereço IP interno estável.
+- [NodePort](#nodeport): os clientes enviam solicitações para o endereço IP de um nó em um ou mais valores nodePort especificados pelo serviço.
+- [LoadBalancer](#loadbalancer): os clientes enviam solicitações para o endereço IP de um balanceador de carga de rede.
+- [ExternalName](#externalname): os clientes internos usam o nome DNS de um serviço como um alias para um nome DNS externo.
+- [Headless](#headless): use um serviço sem comando (*Headless*) quando quiser um agrupamento de *pods*, mas sem precisar de um endereço IP estável.
 
 O tipo **NodePort** é uma extensão do tipo **ClusterIP**. Portanto, um serviço do tipo **NodePort** tem um endereço IP de *cluster*. O tipo **LoadBalancer** é uma extensão do tipo **NodePort**. Portanto, um *Service* do tipo **LoadBalancer** tem um endereço IP de *cluster* e um ou mais valores **NodePort**.
 
@@ -68,6 +68,49 @@ Um [*Service*](https://kubernetes.io/docs/concepts/services-networking/service/)
 Em um *cluster* do Kubernetes, cada pod tem um endereço IP interno. Mas, em uma implantação, os *pods* vêm e vão, e seus endereços IP mudam. Portanto, não faz sentido usar os endereços IP do *pod* diretamente. Com um serviço, você recebe um endereço IP estável válido durante a vida útil do serviço, mesmo quando os endereços IP dos *pods* membro são alterados.
 
 Um serviço também fornece balanceamento de carga. Os clientes chamam um endereço IP único e estável, e suas solicitações são balanceadas nos *pods* que são membros do serviço.
+
+## ClusterIP
+Quando você cria um Serviço do tipo ClusterIP, o Kubernetes cria um endereço IP estável que pode ser acessado pelos nós do cluster.
+
+Veja a seguir um exemplo de um manifesto de um serviço do tipo ClusterIP:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-cip-service
+spec:
+  selector:
+    app: metrics
+    department: sales
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+```
+
+É possível [criar o serviço](https://cloud.google.com/kubernetes-engine/docs/how-to/exposing-apps) usando o comando `kubectl apply -f [MANIFEST_FILE]`. Depois de criar o serviço, use `kubectl get service` para ver o endereço IP estável, saída do comando:
+
+```terminal
+NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)
+my-cip-service   ClusterIP   10.11.247.213   none          80/TCP
+```
+
+Os clientes no cluster chamam o Serviço usando o endereço IP do cluster e a porta TCP especificada no campo `port` do manifesto Serviço. A solicitação é encaminhada para um dos *pods* membros na porta TCP especificada no campo `targetPort`. No exemplo anterior, um cliente chama o serviço no endereço IP `10.11.247.213` na porta TCP `80`. A solicitação é encaminhada a um dos *pods* membros na porta TCP `8080`. Cada *pod* membro precisa ter um contêiner detectando a porta TCP `8080`. Se nenhum contêiner estiver escutando a porta `8080`, os clientes verão uma mensagem como "Falha ao conectar" ou "Este site não pode ser acessado", ou seja, nesse contêiner é necessário ter uma aplicação que esteja ouvindo na porta `8080`.
+
+## NodePort
+
+
+## LoadBalancer
+
+
+## ExternalName
+
+
+## Headless
+
+
 
 **Referências**
 - [Google cloud - Serviços Kubernetes](https://cloud.google.com/kubernetes-engine/docs/concepts/service)
