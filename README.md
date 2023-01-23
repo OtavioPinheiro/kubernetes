@@ -100,7 +100,53 @@ my-cip-service   ClusterIP   10.11.247.213   none          80/TCP
 Os clientes no cluster chamam o Serviço usando o endereço IP do cluster e a porta TCP especificada no campo `port` do manifesto Serviço. A solicitação é encaminhada para um dos *pods* membros na porta TCP especificada no campo `targetPort`. No exemplo anterior, um cliente chama o serviço no endereço IP `10.11.247.213` na porta TCP `80`. A solicitação é encaminhada a um dos *pods* membros na porta TCP `8080`. Cada *pod* membro precisa ter um contêiner detectando a porta TCP `8080`. Se nenhum contêiner estiver escutando a porta `8080`, os clientes verão uma mensagem como "Falha ao conectar" ou "Este site não pode ser acessado", ou seja, nesse contêiner é necessário ter uma aplicação que esteja ouvindo na porta `8080`.
 
 ## NodePort
+Quando você cria um serviço do tipo `NodePort`, o Kubernetes fornece um valor `nodePort`. Em seguida, o Serviço pode ser acessado usando o endereço IP de qualquer nó junto com o valor `nodePort`.
 
+Segue um exemplo de um manifesto para um Serviço do tipo `NodePort`:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-np-service
+spec:
+  selector:
+    app: products
+    department: sales
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+```
+
+Depois de criar o Serviço, use `kubectl get service -o yaml` para visualizar sua especificação e ver o valor `nodePort`.
+
+```yaml
+spec:
+  clusterIP: 10.11.254.114
+  externalTrafficPolicy: Cluster
+  ports:
+  - nodePort: 32675
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+```
+
+Clientes externos chamam o Serviço usando o endereço IP externo de um nó junto com a porta TCP especificada por `nodePort`. A solicitação é encaminhada para um dos *pods* membro na porta TCP especificada pelo campo `targetPort`.
+
+Por exemplo, suponha que o endereço IP externo de um dos nós do *cluster* seja `203.0.113.2`. Em seguida, no exemplo anterior, o cliente externo chama o serviço em `203.0.113.2` na porta TCP `32675`. A solicitação é encaminhada a um dos *pods* membro na porta TCP `8080`. O *pod* membro precisa ter um contêiner escutando a porta TCP `8080`.
+
+O tipo de serviço `NodePort` é uma extensão do tipo de serviço `ClusterIP`. Portanto, os clientes internos têm duas maneiras de chamar o serviço:
+
+- Use `clusterIP` e `port`.
+- Use o endereço IP de um nó e `nodePort`.
+
+Para algumas configurações de *cluster*, [o balanceador de carga HTTP(S) externo](https://cloud.google.com/load-balancing/docs/https) usa um Serviço do tipo `NodePort`. Para mais informações, consulte [Como configurar o balanceamento de carga HTTP(S) com a Entrada](https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer).
+
+Um balanceador de carga HTTP(S) externo é um servidor proxy e é fundamentalmente diferente do [balanceador de carga da rede](https://cloud.google.com/load-balancing/docs/network) descrito no serviço do tipo [LoadBalancer](#loadbalancer).
+
+**Observação**: é possível especificar seu próprio valor **nodePort** no intervalo `30000-32767`. No entanto, é melhor omitir o campo e permitir que o Kubernetes aloque um **nodePort** para você. Isso evita colisões entre os serviços.
 
 ## LoadBalancer
 
