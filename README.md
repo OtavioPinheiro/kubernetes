@@ -179,6 +179,8 @@ Alguns provedores de nuvem permitem que você especifique o valor do campo *load
 
 Para implementar um serviço do tipo *LoadBalancer*, o Kubernetes normalmente começa fazendo as alterações que são equivalentes a solicitação de um serviço do tipo *NodePort*. O componente `cloud-controller-manager` configura o balanceador de carga externo para encaminhar o tráfego para a porta do *node* (nó) atribuída.
 
+Vale lembrar que este tipo de serviço também possui IP interno (*ClusterIP*) e também define as portas dos nodes (*NodePort*), logo, este serviço incluí caracteristicas dos outros serviços do tipo *ClusterIP* e *NodePort*. O IP externo só será definido se houver um provedor de nuvem especificado, caso contrário ficará com *status* pendente (*pending*).
+
 ## ExternalName
 
 
