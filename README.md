@@ -149,7 +149,35 @@ Um balanceador de carga HTTP(S) externo é um servidor proxy e é fundamentalmen
 **Observação**: é possível especificar seu próprio valor **nodePort** no intervalo `30000-32767`. No entanto, é melhor omitir o campo e permitir que o Kubernetes aloque um **nodePort** para você. Isso evita colisões entre os serviços.
 
 ## LoadBalancer
+O tipo de serviço LoadBalancer tem o objetivo de fornecer um IP externo para que um servidor, que contenha os serviços e *nodes* Kubernetes, possa ser acessado. Este tipo de serviço é normalmente utilizado em *clusters* gerenciados ou *clusters* Kubernetes que estão conectados diretamente a um provedor de nuvem (AWS, Asure, Google Cloud, Digital Ocean etc.). Nos provedores de nuvem que suportam os *load balancers* (balanceadores de carga) há um campo `type` que pode ser definido como `LoadBalancer` para que assim o serviço na nuvem possa receber o balanceador de carga.
 
+Segue um exemplo de um *LoadBalancer*:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app.kubernetes.io/name: MyApp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9376
+  clusterIP: 10.0.171.239
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 192.0.2.127
+```
+
+Neste exemplo, o tráfico de dados vindo do load balancer externo é direcionado para os *Pods* do *backend*. O provedor de nuvem decidirá como irá balancear as cargas.
+
+Alguns provedores de nuvem permitem que você especifique o valor do campo *loadBalancerIP*. Nestes casos, o serviço *loadBalancer* é criado com o valor especificado em *loadBalancerIP*. Se este campo, *loadBalancerIP*, não é especificado, então, o serviço *loadBalancer* é definido com um IP temporário (efêmero). Se você especificar o campo *loadBalancerIP*, mas seu provedor de nuvem não suportar esta funcionalidade, então, o campo *loadBalancerIP* será ignorado.
+
+Para implementar um serviço do tipo *LoadBalancer*, o Kubernetes normalmente começa fazendo as alterações que são equivalentes a solicitação de um serviço do tipo *NodePort*. O componente `cloud-controller-manager` configura o balanceador de carga externo para encaminhar o tráfego para a porta do *node* (nó) atribuída.
 
 ## ExternalName
 
@@ -162,6 +190,8 @@ Um balanceador de carga HTTP(S) externo é um servidor proxy e é fundamentalmen
 - [Google cloud - Serviços Kubernetes](https://cloud.google.com/kubernetes-engine/docs/concepts/service)
 - [Kubernetes - Services](https://kubernetes.io/docs/concepts/services-networking/service/)
 - [Kubernetes - Labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+- [Kubernetes - LoadBalancer](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)
+- [Conceitos do serviço LoadBalancer](https://cloud.google.com/kubernetes-engine/docs/concepts/service-load-balancer?hl=pt-br)
 
 [Voltar para o sumário](#sumário)
 
@@ -315,6 +345,7 @@ Tabela de comandos do Kubernets
 | `kubectl config get-contexts` | Comando usado para exibir uma lista dos contextos. |
 | `kind get clusters` | Comando usado para retornar uma lista de *clusters* que estão ativos. |
 | `kind delete clusters <cluster-name>` | Comando usado para deletar *clusters* pelo nome. |
+| `kubectl delete svc <service-name>` | Comando usado para deletar um serviço pelo nome. |
 | `kubectl apply -f <filepath>` | Comando usado para executar determinadas especificações descritas em um arquivo. |
 | `kubectl get deployments` | Comando usado para retornar uma lista dos *deployments* sendo executados. |
 | `kubectl get replicasets` | Comando usado para retornar uma lista de replicas. |
