@@ -345,11 +345,13 @@ Tabela de comandos do Kubernets
 [Voltar para o sumário](#sumário)
 
 # Para lembrar
-- Para criar um pod ou qualquer objeto Kubernetes utilizamos os arquivos .yaml (ou .yml) para passar as especificações e depois executar o comando `kubectl apply -f <filepath>` para efetivamente criar o objeto Kubernetes.
+- Para criar um pod ou qualquer objeto Kubernetes utilizamos os arquivos .yaml (ou .yml) para passar as especificações e depois executaamos o comando `kubectl apply -f <filepath>` para efetivamente criar o objeto Kubernetes.
 - *ReplicaSet* é um objeto Kubernetes que ajuda o gerenciamento dos *Pods* e de suas replicas. A vantagem é que caso um *Pod* caia, o *ReplicaSet* irá construir o *Pod* novamente.
-- As *labels* (propriedade definida no arquivo .yml do objeto Kubernetes) são importantes para facilitar as buscas pelo objeto Kubernetes.
   - Problema do *ReplicaSet* é quando atualizamos a imagem na qual ele se basea para criar os contêineres dos *pods*, pois o *ReplicaSet* não cria atomaticamente novos *pods* com a nova imagem fornecida, é necessário excluir cada um dos *pods* do *ReplicaSet*.
   - Para solucionar/contornar o problema do *ReplicaSet* precisamos usar outro objeto do Kubernetes, o *Deployment*.
+- Quando os *Deployments* estão realizando a atualização dos *ReplicaSets* e dos *Pods*, há um tempo de zero *downtime*, ou seja, sua aplicação não ficará fora do ar durante esse período de atualização, pois ela é feita de maneira progressiva.
+  - O *ReplicaSet* não será deletado, será criado um novo *ReplicaSet* e o antigo ficará sem nenhum *Pod*, ou seja, ficará vazio.
+- As *labels* (propriedade definida no arquivo .yml do objeto Kubernetes) são importantes para facilitar as buscas pelo objeto Kubernetes.
 - O *selector*, uma propriedade definida dentro da propriedade *spec* do objeto Kubernetes, é um seletor de *labels* que consegue selecionar apenas as *labels* com determinadas especificações.
   Exemplo:
     ``` k8s
@@ -360,8 +362,7 @@ Tabela de comandos do Kubernets
     ```
 É graças à propriedade *seletor* que conseguimos diferenciar um serviço do outro, pois utilizamos o *seletor* como uma espécie de filtro.
 - Ordem de grandeza dos objetos Kubernetes: *Deployments* > *ReplicaSets* > *Pods*
-- Quando os *Deployments* estão realizando a atualização dos *ReplicaSets* e dos *Pods*, há um tempo de zero *downtime*, ou seja, sua aplicação não ficará fora do ar durante esse período de atualização, pois ela é feita de maneira progressiva.
-  - O *ReplicaSet* não será deletado, será criado um novo *ReplicaSet* e o antigo ficará sem nenhum *Pod*, ou seja, ficará vazio.
 - Um rótulo é um par de chave-valor arbitrário anexado a um objeto.
+- A diferença entre *port* e *targetPort* é que a propriedade *port* refere-se a porta do *service* e o *targetPort* refere-se a porta do contêiner que será acessada pelo serviço.
 
 [Voltar para o sumário](#sumário)
