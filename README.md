@@ -330,7 +330,7 @@ Tabela de comandos do Kubernets
 | `kubectl describe pod <pod-name>` | Comando usado para descrever um *Pod*. Esse comando exibe as informações do *Pod* especificado. |
 | `kubectl port-forward pod/<pod-name> <host-port>:<pod-port>` | Comando usado para definir a porta que será usada pelo *host* e pelo *pod* (mapeamento/redirecionamento de portas). |
 | `kubectl port-forward svc/<service-name> <host-port>:<service-port>`| Comando usado para definir a porta que será usada pelo *host* e pelo serviço (*service*) (mapeamento/redirecionamento de portas). |
-| `kubectl proxy --port=8080` | Inicia um servidor proxy para o servidor API do Kubernete na porta especificada. |
+| `kubectl proxy --port=<port-number>` | Inicia um servidor proxy para o servidor API do Kubernete na porta especificada. |
 | `kubectl delete replicaset <replicaset-name>` | Deleta um **ReplicaSet** pelo nome. |
 
 **Para saber mais**: 
@@ -364,5 +364,10 @@ Tabela de comandos do Kubernets
 - Ordem de grandeza dos objetos Kubernetes: *Deployments* > *ReplicaSets* > *Pods*
 - Um rótulo é um par de chave-valor arbitrário anexado a um objeto.
 - A diferença entre *port* e *targetPort* é que a propriedade *port* refere-se a porta do *service* e o *targetPort* refere-se a porta do contêiner que será acessada pelo serviço.
+- O `kubectl` é um binário executável que é o *command client interface* utilizado para se comunicar com a API do Kubernetes através de certificados autenticados, porém a API do Kubernetes pode ser acessada diretamente por meio do comando `kubectl proxy --port=<port-number>`. Após executar o comando basta digitar no navegador `localhost:8080` para acessar a API local do Kubernetes.
+  - Para acessar o endpoint do serviço criado: `localhost:<port-number>/api/v1/namespaces/default/service/<service-name>`
+    - <port-number> é o número da porta usada no comando `kubectl proxy`
+    - <service-name> é o nome do serviço
+    - api/v1 normalmente é a API que usamos no Kubernetes
 
 [Voltar para o sumário](#sumário)
