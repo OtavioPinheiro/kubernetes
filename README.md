@@ -7,10 +7,17 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 3. [O que é Kind?](#o-que-é-kind)
 4. [O que é Minikube?](#o-que-é-minikube)
 5. [Conceitos básicos](#conceitos-básicos)
+   1. [Tipos de serviços no Kubernetes](#tipos-de-serviços-no-kubernetes)
+   2. [O que é um serviço no Kubernetes](#o-que-é-um-serviço-no-kubernetes)
+   3. [ClusterIP](#clusterip)
+   4. [NodePort](#nodeport)
+   5. [LoadBalancer](#loadbalancer)
+   6. [ExternalName](#externalname)
+   7. [Headless](#headless)
 6. [O que é um pod?](#o-que-é-um-pod)
 7. [O que é um cluster](#o-que-é-um-cluster)
 8. [Instalações](#instalações)
-9. [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
+9.  [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
 10. [Dicas](#dicas)
 11. [Para lembrar](#para-lembrar)
 
@@ -61,13 +68,21 @@ O tipo **NodePort** é uma extensão do tipo **ClusterIP**. Portanto, um serviç
 
 Vamos falar de cada um desses serviços, mas antes vamos entender o que é um serviço no Kubernetes.
 
+[Voltar para o sumário](#sumário)
+
 ## O que é um serviço no Kubernetes?
-Um [*Service*](https://kubernetes.io/docs/concepts/services-networking/service/) (serviço) agrupa um conjunto de endpoints de [*pod*](#o-que-é-um-pod) em um único recurso. Existem várias maneiras de acessar esse agrupamento, mas, por padrão, é através de um endereço IP do [*cluster*](#o-que-é-um-cluster) que os clientes conseguem acessar os *pods* nos serviços. Um cliente envia uma solicitação ao endereço IP estável e a solicitação é encaminhada a um dos *pods* no serviço. Um serviço identifica seus *pods* membro com um seletor. Para que um pod seja membro do serviço, ele precisa ter todos os rótulos especificados no seletor. Um [rótulo](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) é um par de chave-valor arbitrário anexado a um objeto.
+Um [*Service*](https://kubernetes.io/docs/concepts/services-networking/service/) (serviço) agrupa um conjunto de *endpoints* de [*pod*](#o-que-é-um-pod) em um único recurso. Existem várias maneiras de acessar esse agrupamento, mas, por padrão, é através de um endereço IP do [*cluster*](#o-que-é-um-cluster) que os clientes conseguem acessar os *pods* nos serviços. Um cliente envia uma solicitação ao endereço IP estável e a solicitação é encaminhada a um dos *pods* no serviço.
+
+Um serviço identifica seus *pods* membro com um seletor. Para que um pod seja membro do serviço, ele precisa ter todos os rótulos especificados no seletor.
+
+Um [rótulo](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) é um par de chave-valor arbitrário anexado a um objeto.
 
 ### Por que usar um serviço do Kubernetes?
 Em um *cluster* do Kubernetes, cada pod tem um endereço IP interno. Mas, em uma implantação, os *pods* vêm e vão, e seus endereços IP mudam. Portanto, não faz sentido usar os endereços IP do *pod* diretamente. Com um serviço, você recebe um endereço IP estável válido durante a vida útil do serviço, mesmo quando os endereços IP dos *pods* membro são alterados.
 
 Um serviço também fornece balanceamento de carga. Os clientes chamam um endereço IP único e estável, e suas solicitações são balanceadas nos *pods* que são membros do serviço.
+
+[Voltar para o sumário](#sumário)
 
 ## ClusterIP
 Quando você cria um Serviço do tipo ClusterIP, o Kubernetes cria um endereço IP estável (**interno**) que pode ser acessado pelos nós do cluster.
@@ -98,6 +113,8 @@ my-cip-service   ClusterIP   10.11.247.213   none          80/TCP
 ```
 
 Os clientes no cluster chamam o Serviço usando o endereço IP do cluster e a porta TCP especificada no campo `port` do manifesto Serviço. A solicitação é encaminhada para um dos *pods* membros na porta TCP especificada no campo `targetPort`. No exemplo anterior, um cliente chama o serviço no endereço IP `10.11.247.213` na porta TCP `80`, ou seja, `10.11.247.213:80`. A solicitação é encaminhada a um dos *pods* membros na porta TCP `8080`. Cada *pod* membro precisa ter um contêiner detectando a porta TCP `8080`. Se nenhum contêiner estiver escutando a porta `8080`, os clientes verão uma mensagem como "Falha ao conectar" ou "Este site não pode ser acessado", ou seja, nesse contêiner é necessário ter uma aplicação que esteja ouvindo na porta `8080`.
+
+[Voltar para o sumário](#sumário)
 
 ## NodePort
 Quando você cria um serviço do tipo `NodePort`, o Kubernetes fornece um valor `nodePort`. Em seguida, o Serviço pode ser acessado usando o endereço IP de qualquer nó junto com o valor `nodePort`. Ou seja, este tipo de serviço expõe a porta dos *nodes* (nós) para que possam ser acessados, logo se o *browser* acessar o serviço informando a porta definida na propriedade `nodePort`, ele será redirecionado para o serviço na porta especificada na propriedade `port` (ou seja, será a própria porta do serviço) que, por sua vez, redirecionará para o contêiner (que está dentro dos nodes) na porta especificada em `targetPort` (que é a própria porta do contêiner utilizada pela a aplicação).
@@ -148,6 +165,8 @@ Um balanceador de carga HTTP(S) externo é um servidor proxy e é fundamentalmen
 
 **Observação**: é possível especificar seu próprio valor **nodePort** no intervalo `30000-32767`. No entanto, é melhor omitir o campo e permitir que o Kubernetes aloque um **nodePort** para você. Isso evita colisões entre os serviços.
 
+[Voltar para o sumário](#sumário)
+
 ## LoadBalancer
 O tipo de serviço LoadBalancer tem o objetivo de fornecer um IP externo para que um servidor, que contenha os serviços e *nodes* Kubernetes, possa ser acessado. Este tipo de serviço é normalmente utilizado em *clusters* gerenciados ou *clusters* Kubernetes que estão conectados diretamente a um provedor de nuvem (AWS, Asure, Google Cloud, Digital Ocean etc.). Nos provedores de nuvem que suportam os *load balancers* (balanceadores de carga) há um campo `type` que pode ser definido como `LoadBalancer` para que assim o serviço na nuvem possa receber o balanceador de carga.
 
@@ -181,6 +200,8 @@ Para implementar um serviço do tipo *LoadBalancer*, o Kubernetes normalmente co
 
 Vale lembrar que este tipo de serviço também possui IP interno (*ClusterIP*) e também define as portas dos nodes (*NodePort*), logo, este serviço incluí caracteristicas dos outros serviços do tipo *ClusterIP* e *NodePort*. O IP externo só será definido se houver um provedor de nuvem especificado, caso contrário ficará com *status* pendente (*pending*).
 
+[Voltar para o sumário](#sumário)
+
 ## ExternalName
 Um serviço do tipo `ExternalName` fornece um alias (apelido) interno para um nome DNS externo. Clientes internos fazem solicitações usando o nome definido para o DNS interno e as solicitações são redirecionadas para o nome externo.
 
@@ -200,6 +221,8 @@ Quando você cria um serviço, o Kubernetes cria um nome DNS que os clientes int
 
 O tipo de serviço `ExternalName` é fundamentalmente diferente dos outros tipos de serviço. Na verdade, um Serviço do tipo `ExternalName` não se ajusta à definição de Serviço fornecido no início deste tópico. Um serviço do tipo `ExternalName` **não está associado a um conjunto de *pods*** e **não tem um endereço IP estável**. Em vez disso, um serviço do tipo `ExternalName` **é um mapeamento de um nome DNS interno para um nome DNS externo**.
 
+[Voltar para o sumário](#sumário)
+
 ## Headless
 Às vezes, você não precisa de balanceamento de carga e nem de um endereço IP de serviço. Nesse caso, você pode criar o que chamamos de Serviços *headless*, especificando explicitamente `None` para o IP do cluster (`.spec.clusterIP`).
 
@@ -216,8 +239,9 @@ Para serviços *headless* que não definem seletores, o plano de controle não c
 - Registros DNS `CNAME` para o tipo: `ExternalName` Services.
 - Registros DNS A/AAAA para todos os endereços IP dos *endpoints* prontos do serviço, para todos os tipos de serviço diferentes de `ExternalName`.
   - Para terminais IPv4, o sistema DNS cria registros A.
-  - Para terminais IPv6, o sistema DNS cria registros AAAA
+  - Para terminais IPv6, o sistema DNS cria registros AAAA.
 
+[Voltar para o sumário](#sumário)
 
 **Referências**
 - [Google cloud - Serviços Kubernetes](https://cloud.google.com/kubernetes-engine/docs/concepts/service)
@@ -285,6 +309,8 @@ Em resumo:
 # Conceitos básicos
 A seguir serão descritos alguns conceitos básicos a respeito do Kubernetes, Minikube, Kind e sobre o ambiente de serviços distribuídos em contêineres.
 
+[Voltar para o sumário](#sumário)
+
 ## O que é um Pod?
 *Pod*, no Kubernetes, trata-se de um ou mais contêineres agrupados para fins de administração e gerenciamento de rede. Os *Pods* são as menores unidades implantáveis de computação que você pode criar e gerenciar no Kubernetes. Além dos *pods* serem um grupo de um ou mais contêineres que possuem armazenamento e recursos de rede compartilhados, também possuem uma especificação de como executar os contêineres. Assim como as aplicações de contêineres, um *Pod* pode conter um contêiner inicial que é executado durante a inicialização do *Pod*, sendo possível também injetar um contêiner efêmero (contêiner temporário) para *debugging*, se o *cluster* oferecer essa opção. Em resumo, um *pod* é similar a um conjunto de contêineres com *namespaces* e volumes compartilhados.
 
@@ -318,6 +344,8 @@ Para usar o Kubernets é necessário instalar o kubectl. Recomenda-se sempre uti
 
 Independente do sistema operacional, há pelo menos duas maneiras de se instalar o kubectl, baixando o arquivo binário utilizando o comando `curl` ou utlizando um gerenciador de pacotes.
 
+[Voltar para o sumário](#sumário)
+
 ## Instalação no Windows
 Utilizando o [Chocolatey](https://chocolatey.org/) para realizar a instalação do kubectl. Execute os seguintes comandos na ordem:
 1. `choco install kubernetes-cli`
@@ -329,6 +357,8 @@ Utilizando o [Chocolatey](https://chocolatey.org/) para realizar a instalação 
 7. Verifique se o kubectl está devidamente configurado, verificando o estado do *cluster*: `kubectl cluster-info`. Se receber uma URL como resposta, então o kubectl está corretamente configurado para acessar o *cluster*.
 
 Para mais informações ou outras formas de instalar o kubectl, acesse: https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/ 
+
+[Voltar para o sumário](#sumário)
 
 ## Instalação no Linux
 Utilizando uma distribuição Linux baseada em Debian e utilizando o gerenciador de pacotes padrão apt, siga os passos a seguir para instalar o kubectl:
@@ -357,6 +387,8 @@ Utilizando uma distribuição Linux baseada em Debian e utilizando o gerenciador
 5. Verifique se o kubectl está devidamente configurado, verificando o estado do *cluster*: `kubectl cluster-info`. Se receber uma URL como resposta, então o kubectl está corretamente configurado para acessar o *cluster*.
 
 Para mais informações ou outras maneiras de instalar o kubectl em distribuições Linux, acesse: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+
+[Voltar para o sumário](#sumário)
 
 ## Instalação no MacOS
 Para instalar o kubectl em sistemas MacOS utilizando o gerenciador de pacotes [Homebrew](https://brew.sh/), siga os passos a seguir:
