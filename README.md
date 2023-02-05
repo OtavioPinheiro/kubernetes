@@ -4,22 +4,24 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 ## Sumário
 1. [O que é Kubernets?](#o-que-é-kubernets)
 2. [Tipos de serviços no Kubernetes](#tipos-de-serviços-no-kubernetes)
+   1. [O que é um serviço no Kubernetes](#o-que-é-um-serviço-no-kubernetes)
+   2. [ClusterIP](#clusterip)
+   3. [NodePort](#nodeport)
+   4. [LoadBalancer](#loadbalancer)
+   5. [ExternalName](#externalname)
+   6. [Headless](#headless)
 3. [O que é Kind?](#o-que-é-kind)
 4. [O que é Minikube?](#o-que-é-minikube)
 5. [Conceitos básicos](#conceitos-básicos)
-   1. [Tipos de serviços no Kubernetes](#tipos-de-serviços-no-kubernetes)
-   2. [O que é um serviço no Kubernetes](#o-que-é-um-serviço-no-kubernetes)
-   3. [ClusterIP](#clusterip)
-   4. [NodePort](#nodeport)
-   5. [LoadBalancer](#loadbalancer)
-   6. [ExternalName](#externalname)
-   7. [Headless](#headless)
-6. [O que é um pod?](#o-que-é-um-pod)
-7. [O que é um cluster](#o-que-é-um-cluster)
-8. [Instalações](#instalações)
-9.  [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
-10. [Dicas](#dicas)
-11. [Para lembrar](#para-lembrar)
+   1. [O que é um pod?](#o-que-é-um-pod)
+   2. [O que é um cluster](#o-que-é-um-cluster)
+6. [Instalações](#instalações)
+   1. [Windows](#instalação-no-windows)
+   2. [Linux](#instalação-no-linux)
+   3. [MacOS](#instalação-no-macos)
+7.  [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
+8.  [Dicas](#dicas)
+9.  [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -76,6 +78,8 @@ Um [*Service*](https://kubernetes.io/docs/concepts/services-networking/service/)
 Um serviço identifica seus *pods* membro com um seletor. Para que um pod seja membro do serviço, ele precisa ter todos os rótulos especificados no seletor.
 
 Um [rótulo](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) é um par de chave-valor arbitrário anexado a um objeto.
+
+[Voltar para o sumário](#sumário)
 
 ### Por que usar um serviço do Kubernetes?
 Em um *cluster* do Kubernetes, cada pod tem um endereço IP interno. Mas, em uma implantação, os *pods* vêm e vão, e seus endereços IP mudam. Portanto, não faz sentido usar os endereços IP do *pod* diretamente. Com um serviço, você recebe um endereço IP estável válido durante a vida útil do serviço, mesmo quando os endereços IP dos *pods* membro são alterados.
