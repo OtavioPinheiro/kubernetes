@@ -182,7 +182,23 @@ Para implementar um serviço do tipo *LoadBalancer*, o Kubernetes normalmente co
 Vale lembrar que este tipo de serviço também possui IP interno (*ClusterIP*) e também define as portas dos nodes (*NodePort*), logo, este serviço incluí caracteristicas dos outros serviços do tipo *ClusterIP* e *NodePort*. O IP externo só será definido se houver um provedor de nuvem especificado, caso contrário ficará com *status* pendente (*pending*).
 
 ## ExternalName
+Um serviço do tipo `ExternalName` fornece um alias (apelido) interno para um nome DNS externo. Clientes internos fazem solicitações usando o nome definido para o DNS interno e as solicitações são redirecionadas para o nome externo.
 
+Aqui está um manifesto para um Serviço do tipo `ExternalName`:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-xn-service
+spec:
+  type: ExternalName
+  externalName: example.com
+```
+
+Quando você cria um serviço, o Kubernetes cria um nome DNS que os clientes internos podem usar para chamar o serviço. No exemplo anterior, o nome DNS é `my-xn-service.default.svc.cluster.local`. Quando um cliente interno faz uma solicitação para esse DNS, ele é redirecionado para `example.com`.
+
+O tipo de serviço `ExternalName` é fundamentalmente diferente dos outros tipos de serviço. Na verdade, um Serviço do tipo `ExternalName` não se ajusta à definição de Serviço fornecido no início deste tópico. Um serviço do tipo `ExternalName` **não está associado a um conjunto de *pods*** e **não tem um endereço IP estável**. Em vez disso, um serviço do tipo `ExternalName` **é um mapeamento de um nome DNS interno para um nome DNS externo**.
 
 ## Headless
 
