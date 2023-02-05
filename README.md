@@ -201,7 +201,22 @@ Quando você cria um serviço, o Kubernetes cria um nome DNS que os clientes int
 O tipo de serviço `ExternalName` é fundamentalmente diferente dos outros tipos de serviço. Na verdade, um Serviço do tipo `ExternalName` não se ajusta à definição de Serviço fornecido no início deste tópico. Um serviço do tipo `ExternalName` **não está associado a um conjunto de *pods*** e **não tem um endereço IP estável**. Em vez disso, um serviço do tipo `ExternalName` **é um mapeamento de um nome DNS interno para um nome DNS externo**.
 
 ## Headless
+Às vezes, você não precisa de balanceamento de carga e nem de um endereço IP de serviço. Nesse caso, você pode criar o que chamamos de Serviços *headless*, especificando explicitamente `None` para o IP do cluster (`.spec.clusterIP`).
 
+Você pode usar um serviço *headless* para interagir com outros mecanismos de descoberta de serviço, sem estar vinculado à implementação do Kubernetes.
+
+Para serviços *headless*, um IP de cluster não é alocado, o kube-proxy não lida com esses serviços e não há balanceamento de carga ou proxy feito pela plataforma para eles. Como o DNS é configurado automaticamente, depende se o Serviço tem seletores definidos:
+
+### Com seletores
+Para serviços *headless* que definem seletores, o plano de controle do Kubernetes cria objetos [`EndpointSlice`](https://kubernetes.io/docs/concepts/services-networking/service/#endpointslices) na API do Kubernetes e modifica a configuração do DNS para retornar registros A ou AAAA (endereços IPv4 ou IPv6) que apontam diretamente para os *pods* que suportam o serviço.
+
+### Sem seletores
+Para serviços *headless* que não definem seletores, o plano de controle não cria objetos `EndpointSlice`. No entanto, o sistema DNS procura e configura:
+
+- Registros DNS `CNAME` para o tipo: `ExternalName` Services.
+- Registros DNS A/AAAA para todos os endereços IP dos *endpoints* prontos do serviço, para todos os tipos de serviço diferentes de `ExternalName`.
+  - Para terminais IPv4, o sistema DNS cria registros A.
+  - Para terminais IPv6, o sistema DNS cria registros AAAA
 
 
 **Referências**
@@ -210,6 +225,7 @@ O tipo de serviço `ExternalName` é fundamentalmente diferente dos outros tipos
 - [Kubernetes - Labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
 - [Kubernetes - LoadBalancer](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)
 - [Conceitos do serviço LoadBalancer](https://cloud.google.com/kubernetes-engine/docs/concepts/service-load-balancer?hl=pt-br)
+- [Kubernetes - Headless Services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)
 
 [Voltar para o sumário](#sumário)
 
