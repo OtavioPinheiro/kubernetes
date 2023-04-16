@@ -440,6 +440,12 @@ Tabela de comandos do Kubernets
 
 [Voltar para o sumário](#sumário)
 
+# Configurações de objetos
+Seção dedicada às configurações dos objetos do Kubernetes e seus recursos.
+
+## Variáveis de ambiente
+
+
 # Dicas
 
 
