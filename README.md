@@ -444,7 +444,73 @@ Tabela de comandos do Kubernets
 Seção dedicada às configurações dos objetos do Kubernetes e seus recursos.
 
 ## Variáveis de ambiente
+Para declara variáveis de ambiente no Kubernetes basta usar o parâmetro `env` e definir dentro desse parâmetro o valor da variável dentro do arquivo de especificação do componente kubernetes (deployment).
+Exemplo:
+```yaml
+...
+spec:
+  containers:
+    - name: goserver
+      image: "imagem-docker/servico:tag-versao"
+    env:
+      - name: NAME
+        value: "Teste"
+      - name: AGE
+        value: "20"
+```
+Após adicionado as informações sobre as variáveis de ambiente, executar os comandos: 1. `kubectl apply -f k8s/deployment.yaml`
+2. `kubectl port-forward svc/goserver-service 9000:80`
+3. (Para este exemplo) Abrir o *browser* (navegador) e acessar a URI `localhost:9000`
 
+Obs.: O serviço ou a aplicação em questão devem consumir as informações fornecidas pelas variáveis de ambiente
+
+### ConfigMap
+Trata-se de um arquivo onde podemos fornecer informações de variáveis de ambiente para que possamos enviar o *hard coded* das variáveis de ambiente no código.
+Exemplo:
+Arquivo configMap: [*configMap-env.yaml*](./k8s/configMap-env.yaml)
+Modificações necessárias no arquivo do deployment:
+```yaml
+...
+spec:
+  containers:
+    - name: goserver
+      image: "imagem-docker/servico:tag-versao"
+      env:
+        - name: NAME
+          valueFrom:
+            configMapKeyRef:
+              name: goserver-env
+              key: NAME
+
+        - name: AGE
+          valueFrom:
+            configMapKeyRef:
+              name: goserver-env
+              key: AGE
+
+```
+
+Obs.: ***IMPORTANTE:***Mudar o configMap não significa que os novos valores das variáveis serão reflitas automaticamente na aplicação, é necessário criar um novo deployment.
+
+Após a criação do configMap e as alterações no deployment.yaml, executar os comandos, para este exemplo:
+1. `kubectl apply -f k8s/configmap-env.yaml`
+2. `kubectl apply -f k8s/deployment.yaml`
+3. `kubectl port-forward svc/goserver-service 9000:80`
+
+Uma outra forma de se utilizar as variáveis de ambiente com o configMap é ilustrada a seguir. Ideal para casos onde existem várias variáveis de ambiente para serem utilizadas.
+Exemplo:
+```yaml
+...
+spec:
+  container:
+    - name: goserver
+      image: "imagem-docker/servico:tag-versao"
+      envFrom:
+        - configMapRef:
+          name: goserver-env
+```
+
+Da mesma forma que antes, os comandos do `kubectl apply -f k8s/deployment.yaml` (nome do arquivo com as especificações mencionadas no exemplo acima) e `kubectl port-forward svc/goserver-service 9000:80` devem ser executados.
 
 # Dicas
 
