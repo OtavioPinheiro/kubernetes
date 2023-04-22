@@ -431,7 +431,7 @@ Tabela de comandos do Kubernets
 | `kubectl describe pod <pod-name>` | Comando usado para descrever um *Pod*. Esse comando exibe as informações do *Pod* especificado. |
 | `kubectl port-forward pod/<pod-name> <host-port>:<pod-port>` | Comando usado para definir a porta que será usada pelo *host* e pelo *pod* (mapeamento/redirecionamento de portas). |
 | `kubectl port-forward svc/<service-name> <host-port>:<service-port>`| Comando usado para definir a porta que será usada pelo *host* e pelo serviço (*service*) (mapeamento/redirecionamento de portas). |
-| `kubectl proxy --port=<port-number>` | Inicia um servidor proxy para o servidor API do Kubernete na porta especificada. |
+| `kubectl proxy --port=<port-number>` | Inicia um servidor proxy para o servidor API do Kubernetes na porta especificada. |
 | `kubectl delete replicaset <replicaset-name>` | Deleta um **ReplicaSet** pelo nome. |
 
 **Para saber mais**: 
