@@ -11,7 +11,8 @@ echo
 echo "Instalando Kubernetes"
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 sudo apt-get update
-sudo apt-get install -y kubectl=1.24.12-00
+read -p 'Informe o número da versão: ' num_version
+sudo apt-get install -y kubectl=$num_version-00
 echo
 echo "Verificando a instalação"
 kubectl version
