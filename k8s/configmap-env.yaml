@@ -4,4 +4,4 @@ metadata:
   name: goserver-env
 data:
   NAME: "John Doe"
-  AGE: "20s"
+  AGE: "20"
