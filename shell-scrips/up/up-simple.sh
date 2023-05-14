@@ -1,10 +1,6 @@
 #!/bin/bash
 
 # Subindo o cluster, deployment, service
-echo "Subindo o cluster"
-kind create cluster --config=k8s/kind.yaml --name=fullcycle &&
-kubectl cluster-info --context kind-fullcycle &&
-echo
 read -p "Qual deployment deseja aplicar?" deployment
 if [ -f "$(pwd)/k8s/deployment-variables-$deployment.yaml" ]; then
     echo "Subindo deployment" &&
