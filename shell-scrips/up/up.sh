@@ -5,11 +5,20 @@ echo "Subindo o cluster"
 kind create cluster --config=k8s/kind.yaml --name=fullcycle &&
 kubectl cluster-info --context kind-fullcycle &&
 echo
-echo "Subindo deployment" &&
-kubectl apply -f k8s/deployment-variables-3.yaml &&
+read -p "Qual deployment deseja aplicar?" deployment
+if [ -f "$(pwd)/k8s/deployment-variables-$deployment.yaml" ]; then
+    echo "Subindo deployment" &&
+    kubectl apply -f k8s/deployment-variables-$deployment.yaml
+else
+    echo "Arquivo deployment não existe"
+    echo "deployment-variables-$deployment.yaml"
+    echo "Aplicando o arquivo deployment padrão ..."
+    kubectl apply -f k8s/deployment.yaml
+fi
 echo
 echo "Subindo ConfigMap" &&
 kubectl apply -f k8s/configmap-env.yaml &&
+kubectl apply -f k8s/configmap-family.yaml &&
 echo
 echo "Subindo service" &&
 kubectl apply -f k8s/service-clusterIP.yaml &&
