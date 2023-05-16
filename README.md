@@ -15,13 +15,16 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 5. [Conceitos básicos](#conceitos-básicos)
    1. [O que é um pod?](#o-que-é-um-pod)
    2. [O que é um cluster](#o-que-é-um-cluster)
-6. [Instalações](#instalações)
+6. [Configurações de objetos](#configurações-de-objetos)
+   1. [Variáveis de ambiente](#variáveis-de-ambiente)
+      1. [ConfigMap](#configmap)
+7. [Instalações](#instalações)
    1. [Windows](#instalação-no-windows)
    2. [Linux](#instalação-no-linux)
    3. [MacOS](#instalação-no-macos)
-7.  [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
-8.  [Dicas](#dicas)
-9.  [Para lembrar](#para-lembrar)
+8.  [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
+9.  [Dicas](#dicas)
+10. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -433,9 +436,11 @@ Tabela de comandos do Kubernets
 | `kubectl port-forward svc/<service-name> <host-port>:<service-port>`| Comando usado para definir a porta que será usada pelo *host* e pelo serviço (*service*) (mapeamento/redirecionamento de portas). |
 | `kubectl proxy --port=<port-number>` | Inicia um servidor proxy para o servidor API do Kubernetes na porta especificada. |
 | `kubectl delete replicaset <replicaset-name>` | Deleta um **ReplicaSet** pelo nome. |
+| `kubectl logs <nome-do-pod>` | Exibe os logs do pod especificado. |
 
 **Para saber mais**: 
 - [kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
+- [Kubernetes Cheat Sheet](https://kubernetes.io/pt-br/docs/reference/kubectl/cheatsheet/)
 - [Use an HTTP Proxy to Access the Kubernetes API](https://kubernetes.io/docs/tasks/extend-kubernetes/http-proxy-access-api/)
 
 [Voltar para o sumário](#sumário)
@@ -512,8 +517,12 @@ spec:
 
 Da mesma forma que antes, os comandos do `kubectl apply -f k8s/deployment.yaml` (nome do arquivo com as especificações mencionadas no exemplo acima) e `kubectl port-forward svc/goserver-service 9000:80` devem ser executados.
 
-# Dicas
+[Voltar para o sumário](#sumário)
 
+# Dicas
+As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um serviço, pod, deployments, etc. Para verificar os logs de erros e/ou tentar realizar o processo de *debug* existem alguns comandos mais usados para auxiliar nesta tarefa. Os comandos mais usados para se obter informações de pods são:
+- `kubectl logs <nome-do-pod>`
+- `kubectl describe <nome-do-pod>`
 
 [Voltar para o sumário](#sumário)
 
