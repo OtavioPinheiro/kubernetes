@@ -463,11 +463,12 @@ spec:
       - name: AGE
         value: "20"
 ```
-Após adicionado as informações sobre as variáveis de ambiente, executar os comandos: 1. `kubectl apply -f k8s/deployment.yaml`
+Após adicionado as informações sobre as variáveis de ambiente, executar os comandos:
+1. `kubectl apply -f k8s/deployment.yaml`
 2. `kubectl port-forward svc/goserver-service 9000:80`
-3. (Para este exemplo) Abrir o *browser* (navegador) e acessar a URI `localhost:9000`
+3. (Para este exemplo) Abrir o *browser* (navegador) e acessar `localhost:9000`
 
-Obs.: O serviço ou a aplicação em questão devem consumir as informações fornecidas pelas variáveis de ambiente
+**Obs.:** O serviço ou a aplicação em questão devem consumir as informações fornecidas pelas variáveis de ambiente.
 
 ### ConfigMap
 Trata-se de um arquivo onde podemos fornecer informações de variáveis de ambiente para que possamos enviar o *hard coded* das variáveis de ambiente no código.
@@ -508,14 +509,41 @@ Exemplo:
 ...
 spec:
   container:
-    - name: goserver
+    - name: <nome-do-container>
       image: "imagem-docker/servico:tag-versao"
       envFrom:
         - configMapRef:
-          name: goserver-env
+          name: <nome-do-configMap>
 ```
 
 Da mesma forma que antes, os comandos do `kubectl apply -f k8s/deployment.yaml` (nome do arquivo com as especificações mencionadas no exemplo acima) e `kubectl port-forward svc/goserver-service 9000:80` devem ser executados.
+
+Podemos ainda utilizar vários arquivos de configMap, assim como podemos injetar um configMap no container por meio dos *volumes*. Para isso, no arquivo de *deployment* é necessário declarar o volume e informar o parâmetro `volumeMounts`, responsável por informar ao Kubernetes qual volume queremos montar. Exemplo do arquivo de deployment:
+```yaml
+...
+spec:
+  container:
+    - name: <nome-do-container>
+      image: ...
+      
+      volumeMounts:
+        - mountPath: "<caminho-do-volume-no-container>"
+          name: <nome-do-volume>
+          readOnly: true
+  volumes:
+    - name: <nome-do-volume>
+      configMap:
+        name: <nome-do-configMap>
+        items:
+          - key: <nome-da-chave>
+            path: "<nome-do-arquivo>"
+```
+
+Algumas explicações. 
+- O campo `mountPath` é o caminho absoluto dentro do container onde será montado o volume.
+- o campo `name`, do `configMap`, deve ser o nome do arquivo configMap criado sem a extensão do arquivo.
+- O campo `key` em `items` deve ser o nome do campo criado dentro de `data`, no arquivo configMap.
+- O campo `path` dentro de `items` refere-se ao nome do arquivo mais a sua extensão, que estará disponível, depois criado, dentro do `volume`. Ou seja, irá ler o configMap definido, acessando o parâmetro definido na `key` e o valor ser colocado no arquivo definido no parâmetro `path` de `items` para ser acessado pela aplicação dentro do contairner.
 
 [Voltar para o sumário](#sumário)
 
