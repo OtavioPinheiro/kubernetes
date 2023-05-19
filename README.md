@@ -547,6 +547,19 @@ Algumas explicações.
 
 [Voltar para o sumário](#sumário)
 
+### Secrets
+*Secrets* é um outro objeto Kubernets que é utilizado para guardar dados sensíveis. Exemplo:
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: <nome-do-secret>
+type: <tipo-do-secret>
+data:
+  USER: "<valor-em-base64>"
+  PASSWORD: "<valor-em-base64>"
+```
+
 # Dicas
 As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um serviço, pod, deployments, etc. Para verificar os logs de erros e/ou tentar realizar o processo de *debug* existem alguns comandos mais usados para auxiliar nesta tarefa. Os comandos mais usados para se obter informações de pods são:
 - `kubectl logs <nome-do-pod>`
