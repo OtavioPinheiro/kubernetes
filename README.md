@@ -472,7 +472,8 @@ Após adicionado as informações sobre as variáveis de ambiente, executar os c
 
 ### ConfigMap
 Trata-se de um arquivo onde podemos fornecer informações de variáveis de ambiente para que possamos enviar o *hard coded* das variáveis de ambiente no código.
-Exemplo:
+
+**Exemplo:**
 Arquivo configMap: [*configMap-env.yaml*](./k8s/configMap-env.yaml)
 Modificações necessárias no arquivo do deployment:
 ```yaml
@@ -519,6 +520,7 @@ spec:
 Da mesma forma que antes, os comandos do `kubectl apply -f k8s/deployment.yaml` (nome do arquivo com as especificações mencionadas no exemplo acima) e `kubectl port-forward svc/goserver-service 9000:80` devem ser executados.
 
 Podemos ainda utilizar vários arquivos de configMap, assim como podemos injetar um configMap no container por meio dos *volumes*. Para isso, no arquivo de *deployment* é necessário declarar o volume e informar o parâmetro `volumeMounts`, responsável por informar ao Kubernetes qual volume queremos montar. Exemplo do arquivo de deployment:
+
 ```yaml
 ...
 spec:
@@ -539,7 +541,7 @@ spec:
             path: "<nome-do-arquivo>"
 ```
 
-Algumas explicações. 
+**Algumas explicações.**
 - O campo `mountPath` é o caminho absoluto dentro do container onde será montado o volume.
 - o campo `name`, do `configMap`, deve ser o nome do arquivo configMap criado sem a extensão do arquivo.
 - O campo `key` em `items` deve ser o nome do campo criado dentro de `data`, no arquivo configMap.
@@ -560,6 +562,65 @@ data:
   PASSWORD: "<valor-em-base64>"
 ```
 
+No Kubernetes, Secrets são objetos que são usados para armazenar informações sensíveis, como senhas, chaves de API ou certificados TLS. Eles são destinados a garantir a segurança dessas informações, uma vez que podem ser criptografados quando em repouso e só são acessíveis pelos processos autorizados.
+
+Os Secrets são armazenados no cluster Kubernetes e podem ser usados por aplicativos dentro do cluster. Eles são usados principalmente para passar informações confidenciais para os containers em tempo de execução, sem expor essas informações diretamente nos arquivos de configuração.
+
+**Os Secrets no Kubernetes podem ser de dois tipos:**
+
+1. **Secrets genéricos:** que consistem em pares de chave-valor, onde a chave é o nome do segredo e o valor é o dado confidencial. Eles são usados para armazenar informações simples, como senhas de banco de dados ou tokens de API.
+
+**Exemplo de Secrets genéricos no Kubernetes:**
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret
+stringData:
+  username: myUser
+  password: myPassword
+```
+
+2. Secrets baseados em arquivo: que contêm arquivos, como chaves privadas ou certificados TLS. Eles são usados para fornecer informações confidenciais em formato de arquivo para aplicativos.
+
+**Exemplo de Secrets baseados em arquivo no Kubernetes:**
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tls-secret
+data:
+  tls.crt: <base64-encoded certificate file>
+  tls.key: <base64-encoded private key file>
+```
+
+Os Secrets podem ser referenciados em tempo de execução pelos pods ou deployments que precisam acessar as informações confidenciais. Essas informações podem ser montadas em um volume ou injetadas como variáveis de ambiente no container, garantindo que apenas os recursos autorizados tenham acesso aos dados sensíveis.
+
+Por exemplo, um pod que precisa de acesso a um banco de dados pode referenciar um Secret que contém as credenciais do banco de dados, montando o Secret como um volume e acessando o arquivo de senha diretamente. Dessa forma, as informações confidenciais não são expostas diretamente no arquivo de configuração do pod.
+
+No Kubernetes, os Secrets são utilizados para armazenar informações sensíveis, como senhas, tokens, chaves de API, certificados TLS, entre outros. Existem diferentes **tipos de Secrets** disponíveis no Kubernetes:
+
+**1. secrets Opaque:**
+- Este tipo de Secret armazena dados arbitrários como pares de chave-valor, onde os valores são representados como strings base64-encoded. Os Secrets Opaque são úteis quando se deseja armazenar informações arbitrárias que não precisam ser interpretadas pelo Kubernetes.
+
+**2. secrets Docker-registry:**
+- Este tipo de Secret é utilizado para armazenar credenciais de autenticação de registro Docker. Ele contém informações como o servidor do registro, nome do usuário, senha e e-mail associado. Essas informações são usadas pelo Kubernetes para autenticar um pod em um registro Docker privado.
+
+**3. secrets TLS:**
+- Os Secrets TLS são usados para armazenar certificados SSL/TLS. Ele inclui as chaves pública e privada, bem como qualquer cadeia de certificados adicional necessária para o certificado. Esses Secrets podem ser usados para configurar comunicações seguras entre componentes do Kubernetes ou para disponibilizar certificados para aplicativos em execução nos pods.
+
+**4. secrets Service Account:**
+- Quando um pod precisa acessar a API do Kubernetes, o Secrets Service Account é usado para fornecer as credenciais necessárias. Esse Secrets é criado automaticamente quando um Service Account é criado e contém um token de acesso que pode ser usado pelo pod para autenticar-se na API.
+
+**5. secrets External:**
+- Os Secrets External são usados quando as informações delicadas ou confidenciais não são armazenadas diretamente no cluster Kubernetes. Em vez disso, um objeto Secret é criado que faz referência ao local externo, onde as informações são armazenadas com segurança. O Kubernetes é capaz de buscar esses dados externos sempre que necessário, utilizando autenticação e autorização adequada.
+
+É importante ressaltar que os Secrets são armazenados no cluster Kubernetes de forma criptografada e só podem ser acessados pelos pods e usuários autorizados. Eles são uma maneira segura de gerenciar e fornecer informações sensíveis aos aplicativos que estão em execução no Kubernetes.
+
+#### Para saber mais
+Para saber mais sobre ***Secrets*** no Kubernetes leia a documentação sobre [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/).
+
 # Dicas
 As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um serviço, pod, deployments, etc. Para verificar os logs de erros e/ou tentar realizar o processo de *debug* existem alguns comandos mais usados para auxiliar nesta tarefa. Os comandos mais usados para se obter informações de pods são:
 - `kubectl logs <nome-do-pod>`
@@ -576,13 +637,15 @@ As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um 
   - O *ReplicaSet* não será deletado, será criado um novo *ReplicaSet* e o antigo ficará sem nenhum *Pod*, ou seja, ficará vazio.
 - As *labels* (propriedade definida no arquivo .yml do objeto Kubernetes) são importantes para facilitar as buscas pelo objeto Kubernetes.
 - O *selector*, uma propriedade definida dentro da propriedade *spec* do objeto Kubernetes, é um seletor de *labels* que consegue selecionar apenas as *labels* com determinadas especificações.
-  Exemplo:
+
+  **Exemplo:**
     ``` k8s
     spec:
         selector:
             matchLabels:
                 app: goserver
     ```
+
 É graças à propriedade *seletor* que conseguimos diferenciar um serviço do outro, pois utilizamos o *seletor* como uma espécie de filtro.
 - Ordem de grandeza dos objetos Kubernetes: *Deployments* > *ReplicaSets* > *Pods*
 - Um rótulo é um par de chave-valor arbitrário anexado a um objeto.
