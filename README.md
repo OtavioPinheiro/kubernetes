@@ -623,14 +623,12 @@ No Kubernetes, os Secrets são utilizados para armazenar informações sensívei
 
 É importante ressaltar que os Secrets são armazenados no cluster Kubernetes de forma criptografada e só podem ser acessados pelos pods e usuários autorizados. Eles são uma maneira segura de gerenciar e fornecer informações sensíveis aos aplicativos que estão em execução no Kubernetes.
 
-[Voltar para o sumário](#sumário)
+#### Para saber mais
+Para saber mais sobre ***Secrets*** no Kubernetes leia a documentação sobre [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/).
 
 # Health check
 
 [Voltar para o sumário](#sumário)
-
-#### Para saber mais
-Para saber mais sobre ***Secrets*** no Kubernetes leia a documentação sobre [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/).
 
 # Dicas
 As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um serviço, pod, deployments, etc. Para verificar os logs de erros e/ou tentar realizar o processo de *debug* existem alguns comandos mais usados para auxiliar nesta tarefa. Os comandos mais usados para se obter informações de pods são:
