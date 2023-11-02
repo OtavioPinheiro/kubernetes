@@ -627,6 +627,33 @@ No Kubernetes, os Secrets são utilizados para armazenar informações sensívei
 Para saber mais sobre ***Secrets*** no Kubernetes leia a documentação sobre [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/).
 
 # Health check
+*Health check* é uma verificação de saúde que garante que a aplicação esteja funcionando corretamente.
+
+O Kubernetes fornece vários tipos de verificações de saúde para garantir que suas aplicações estão funcionando corretamente:
+
+## Liveness Probes
+O Kubernetes usa *liveness probes* para saber quando reiniciar um contêiner. Por exemplo, as *liveness probes* podem detectar um *deadlock*, onde uma aplicação está em execução, mas incapaz de progredir. Reiniciar um contêiner nesse estado pode ajudar a tornar a aplicação mais disponível, apesar dos *bugs*.
+
+## Readiness Probes
+O Kubernetes usa *readiness probes* para saber quando um contêiner está pronto para começar a aceitar tráfego. Um Pod é considerado pronto quando todos os seus contêineres estão prontos. Um uso desse sinal é controlar quais Pods são usados como backends para Services. Quando um Pod não está pronto, ele é removido dos balanceadores de carga do Service.
+
+## Startup Probes
+O Kubernetes usa *startup probes* para saber quando uma aplicação de contêiner foi iniciada. Se tal sonda estiver configurada, as sondas de *liveness* e *readiness* não começam até que ela tenha sucesso, garantindo que essas sondas não interfiram na inicialização da aplicação.
+
+Cada tipo de verificação de saúde expõe um endpoint HTTP e pode ser verificado individualmente. As verificações de saúde devem ser configuradas com cuidado para garantir que elas realmente indiquem falhas irreparáveis na aplicação, por exemplo, um *deadlock*. A implementação incorreta das sondas de *liveness* pode levar a falhas em cascata.
+
+**FONTE**: [Configure Liveness, Readiness and Startup Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+
+[Voltar para o sumário](#sumário)
+
+## Healthz, Livez e Readyz
+`/healthz`, `/livez` e `/readyz` são endpoints de verificação de saúde usados em sistemas de software, como serviços baseados em microserviços, para avaliar o estado de um serviço. Eles são especialmente úteis em ambientes de orquestração, como Kubernetes, onde a verificação de saúde é crítica para o dimensionamento automático e a alta disponibilidade. Cada um desses endpoints tem uma finalidade específica:
+
+1. **/healthz**: Este endpoint é usado para verificar a saúde geral do serviço. Ele deve retornar uma resposta bem-sucedida (como HTTP 200 OK) quando o serviço estiver operacional. Caso contrário, ele deve retornar um erro (como HTTP 500 Internal Server Error). O /healthz é usado para verificar se o serviço está "vivo" e funcionando em um nível básico.
+   
+2. **/livez**: Este endpoint verifica se o serviço está "vivo" e funcionando, mas pode ser mais abrangente do que o /healthz. Ele pode realizar verificações adicionais, como conexão com bancos de dados ou serviços externos. É usado para avaliar a "vivacidade" do serviço em um nível mais profundo.
+   
+3. **/readyz**: Este endpoint é usado para verificar se o serviço está "pronto" para receber tráfego. Ele pode realizar verificações específicas para determinar se o serviço está em um estado de leitura para atender às solicitações. Isso é particularmente útil durante o processo de inicialização de um serviço, permitindo que o sistema de orquestração aguarde até que o serviço esteja totalmente pronto.
 
 [Voltar para o sumário](#sumário)
 
