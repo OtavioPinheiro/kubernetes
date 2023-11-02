@@ -23,8 +23,13 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
    2. [Linux](#instalação-no-linux)
    3. [MacOS](#instalação-no-macos)
 8.  [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
-9.  [Dicas](#dicas)
-10. [Para lembrar](#para-lembrar)
+9.  [Configurações de objetos](#configurações-de-objetos)
+    1.  [Variáveis de ambiente](#variáveis-de-ambiente)
+        1.  [ConfigMap](#configmap)
+10. [Secrets](#secrets)
+11. [Health check](#health-check)
+12. [Dicas](#dicas)
+13. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -617,6 +622,12 @@ No Kubernetes, os Secrets são utilizados para armazenar informações sensívei
 - Os Secrets External são usados quando as informações delicadas ou confidenciais não são armazenadas diretamente no cluster Kubernetes. Em vez disso, um objeto Secret é criado que faz referência ao local externo, onde as informações são armazenadas com segurança. O Kubernetes é capaz de buscar esses dados externos sempre que necessário, utilizando autenticação e autorização adequada.
 
 É importante ressaltar que os Secrets são armazenados no cluster Kubernetes de forma criptografada e só podem ser acessados pelos pods e usuários autorizados. Eles são uma maneira segura de gerenciar e fornecer informações sensíveis aos aplicativos que estão em execução no Kubernetes.
+
+[Voltar para o sumário](#sumário)
+
+# Health check
+
+[Voltar para o sumário](#sumário)
 
 #### Para saber mais
 Para saber mais sobre ***Secrets*** no Kubernetes leia a documentação sobre [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/).
