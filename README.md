@@ -28,8 +28,10 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
         1.  [ConfigMap](#configmap)
 10. [Secrets](#secrets)
 11. [Health check](#health-check)
-12. [Dicas](#dicas)
-13. [Para lembrar](#para-lembrar)
+12. [Configurando Probes](#configurando-probes)
+13. [Healthz, livez e readyz](#healthz-livez-e-readyz)
+14. [Dicas](#dicas)
+15. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -638,11 +640,23 @@ O Kubernetes usa *liveness probes* para saber quando reiniciar um contêiner. Po
 O Kubernetes usa *readiness probes* para saber quando um contêiner está pronto para começar a aceitar tráfego. Um Pod é considerado pronto quando todos os seus contêineres estão prontos. Um uso desse sinal é controlar quais Pods são usados como backends para Services. Quando um Pod não está pronto, ele é removido dos balanceadores de carga do Service.
 
 ## Startup Probes
-O Kubernetes usa *startup probes* para saber quando uma aplicação de contêiner foi iniciada. Se tal sonda estiver configurada, as sondas de *liveness* e *readiness* não começam até que ela tenha sucesso, garantindo que essas sondas não interfiram na inicialização da aplicação.
+O Kubernetes usa *startup probes* para saber quando uma aplicação de contêiner foi iniciada. Quando a verificação estiver configurada, as verificações do *liveness* e do *readiness* não irão começar até que o *startup probe* tenha sucesso, garantindo que essas verificações não interfiram na inicialização da aplicação.
 
 Cada tipo de verificação de saúde expõe um endpoint HTTP e pode ser verificado individualmente. As verificações de saúde devem ser configuradas com cuidado para garantir que elas realmente indiquem falhas irreparáveis na aplicação, por exemplo, um *deadlock*. A implementação incorreta das sondas de *liveness* pode levar a falhas em cascata.
 
 **FONTE**: [Configure Liveness, Readiness and Startup Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+
+[Voltar para o sumário](#sumário)
+
+## Configurando Probes
+No Kubernetes quando vamos definir um Probe, como, por exemplo, o *livenessProbe*, temos que informar alguns campos, são eles:
+- **initialDelaySeconds:** especifica o tempo, em segundos, para que o *Probe* (*liveness*, *readiness* e *starup*) deve espere para começar a verificação. Se o *startup probe* estiver definido, o tempo de espera para o *liveness* e o *readiness probe* iniciarem a verificação só irá começar quando o starup probe tiver sido bem-sucedido. E se o valor do *periodSeconds* for maior do que o valor no *initialDelaySeconds*, então o *initialDelaySeconds* será ignorado. Por padrão o valor deste campo é 0.
+- **periodSeconds:** especifica o intervalo de tempo, em segundos, enter as verificações do *livenessProbe*, sendo o valor padrão de 30 segundos. Ou seja, de quanto em quanto tempo a verificação do *livenessProve* será realizada.
+- **failureThreshold:** especifica o número máximo de falhas consecutivas permitas antes que o Kubernetes reinicie o pod, sendo 3 o valor padrão.
+- **successThreshold:** especifica o número mínimo de sucessos consecutivos necessários para que o *livenessProbe* seja considerado bem-sucedido, onde o valor padrão é 1.
+- **timeoutSeconds:** especifica
+
+**FONTE**: [Configure Probes]()
 
 [Voltar para o sumário](#sumário)
 
