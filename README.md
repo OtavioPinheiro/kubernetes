@@ -23,15 +23,16 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
    2. [Linux](#instalação-no-linux)
    3. [MacOS](#instalação-no-macos)
 8.  [Comandos do Kubernets e do kind](#comandos-do-kubernets-e-do-kind)
-9.  [Configurações de objetos](#configurações-de-objetos)
+9. [Comandos úteis do Linux](#comandos-úteis-do-linux)
+10.  [Configurações de objetos](#configurações-de-objetos)
     1.  [Variáveis de ambiente](#variáveis-de-ambiente)
         1.  [ConfigMap](#configmap)
-10. [Secrets](#secrets)
-11. [Health check](#health-check)
-12. [Configurando Probes](#configurando-probes)
-13. [Healthz, livez e readyz](#healthz-livez-e-readyz)
-14. [Dicas](#dicas)
-15. [Para lembrar](#para-lembrar)
+11. [Secrets](#secrets)
+12. [Health check](#health-check)
+13. [Configurando Probes](#configurando-probes)
+14. [Healthz, livez e readyz](#healthz-livez-e-readyz)
+15. [Dicas](#dicas)
+16. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -452,6 +453,13 @@ Tabela de comandos do Kubernets
 
 [Voltar para o sumário](#sumário)
 
+# Comandos úteis do Linux
+| Descrição | Comando |
+|-----------|---------|
+| Monitora a saída de um comando em um dado intervalo de tempo | watch -n1 <comando-a-ser-monitorado> |
+
+[Voltar para o sumário](#sumário)
+
 # Configurações de objetos
 Seção dedicada às configurações dos objetos do Kubernetes e seus recursos.
 
@@ -656,7 +664,7 @@ No Kubernetes quando vamos definir um Probe, como, por exemplo, o *livenessProbe
 - **successThreshold:** especifica o número mínimo de sucessos consecutivos necessários para que o *livenessProbe* seja considerado bem-sucedido, onde o valor padrão é 1.
 - **timeoutSeconds:** especifica
 
-**FONTE**: [Configure Probes]()
+**FONTE**: [Configure Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
 
 [Voltar para o sumário](#sumário)
 
