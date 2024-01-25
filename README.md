@@ -31,8 +31,9 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 12. [Health check](#health-check)
 13. [Configurando Probes](#configurando-probes)
 14. [Healthz, livez e readyz](#healthz-livez-e-readyz)
-15. [Dicas](#dicas)
-16. [Para lembrar](#para-lembrar)
+15. [HPA - Horizontal POD Autoscaler](#hpa---horizontal-pod-autoscaler)
+16. [Dicas](#dicas)
+17. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -685,6 +686,58 @@ As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um 
 - `kubectl describe <nome-do-pod>`
 
 [Voltar para o sumário](#sumário)
+
+
+# HPA - Horizontal POD Autoscaler
+HPA (Horizontal POD Autoscale) é um controlador que escala automaticamente o número de Pods em um Deployment, Replica Set ou StatefulSet com base em uma métrica (como CPU, memória, etc.) que são coletadas em intervalos regulares.
+
+O HPA usa informações do Metrics Server para detectar o aumento no uso de recursos e responde escalando a carga de trabalho. Isso é especialmente útil nas arquiteturas de microsserviços e dá ao cluster Kubernetes a capacidade de escalar seu deployment com base em métricas como a utilização da CPU.
+
+Porém, é importante notar que o _autoscaling_ funciona melhor para aplicativos sem estado ou stateless, especialmente aqueles capazes de ter várias instâncias da aplicação em execução e aceitando tráfego em paralelo.
+
+**FONTES:**
+- [Como Escalar Automaticamente suas Cargas de Trabalho no Kubernetes da DigitalOcean](https://www.digitalocean.com/community/tutorials/como-escalar-automaticamente-suas-cargas-de-trabalho-no-kubernetes-da-digitalocean-pt)
+- [https://www.azurebrasil.cloud/kubernetes-diminuindo-custos-na-nuvem-autoscaler-hpa/](https://www.azurebrasil.cloud/kubernetes-diminuindo-custos-na-nuvem-autoscaler-hpa/)
+
+[Voltar para o sumário](#sumário)
+
+## Metrics Server
+Metrics Server nada mais é do que um componente do Kubernetes que coleta métricas, como o uso de CPU e memória, dos pods e nós do cluster e as expõe no servidor de API do Kubernetes por meio da API de Métricas. Essas métricas são usadas por outros componentes do Kubernetes para fins de escalonamento automático e ajuste de recursos.
+
+### Instalação
+Normalmente quando estamos trabalhando com o Kubernetes nas nuvens ou Kubernetes gerenciado (GCP, GKE, EKS, AKS)o metrics-server já vem instalado por padrão, o que não é o caso para quando estamos trabalhando no ***kind***. Além disso, o metrics-server exige uma conexão segura em todos os clusters, exigindo o TLS. Em **ambiente de desenvolvimento**, é possível ignorar o uso do TLS. A seguir o passo-a-passo para instalar o metrics-server no kind em ambiente de desenvolvimento:
+1. Execute o seguinte comando dentro de uma pasta específica para o Kubernetes (e.g. **k8s/**). Esse comando irá fazer o download do arquivo components.yaml
+`wget https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.7.0/components.yaml`
+2. (Opcional) Renomeie o arquivo para "metrics-server.yaml"
+3. Encontre o trecho `kind: Deployment`
+4. Vá até
+```yaml
+spec:
+  containers:
+  - args:
+    - --cert-dir=/tmp
+    - --secure-port=4443
+    - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+    - --kubelet-use-node-status-port
+    - --metric-resolution=15s
+```
+5. Inclua `--kubelet-insecure-tls` logo abaixo de `--kubelet-use-node-status-port`. Resultado:
+```yaml
+spec:
+  containers:
+  - args:
+    - --cert-dir=/tmp
+    - --secure-port=4443
+    - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+    - --kubelet-use-node-status-port
+    - --kubelet-insecure-tls
+    - --metric-resolution=15s
+```
+6. Execute `kubectl apply -f metrics-server.yaml`
+7. Verifique se o metrics-server está funcionando com o comando `kubectl get apiservices`. Em seguida encontre o service `kube-system/metrics-server`, deve estar como disponível (i.e. AVAILABLE = True).
+
+[Voltar para o sumário](#sumário)
+
 
 # Para lembrar
 - Para criar um pod ou qualquer objeto Kubernetes utilizamos os arquivos .yaml (ou .yml) para passar as especificações e depois executaamos o comando `kubectl apply -f <filepath>` para efetivamente criar o objeto Kubernetes.
