@@ -41,8 +41,8 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
   - [Healthz, Livez e Readyz](#healthz-livez-e-readyz)
 - [Dicas](#dicas)
 - [HPA - Horizontal POD Autoscaler](#hpa---horizontal-pod-autoscaler)
-  - [Metrics Server](#metrics-server)
-    - [Instalação](#instalação)
+- [Metrics Server](#metrics-server)
+  - [Instalação](#instalação)
 - [Recursos (*Resources*)](#recursos-resources)
   - [Tabelas das unidades binárias](#tabelas-das-unidades-binárias)
 - [Para lembrar](#para-lembrar)
@@ -713,10 +713,10 @@ Porém, é importante notar que o _autoscaling_ funciona melhor para aplicativos
 
 [Voltar para o sumário](#sumário)
 
-## Metrics Server
+# Metrics Server
 Metrics Server nada mais é do que um componente do Kubernetes que coleta métricas, como o uso de CPU e memória, dos pods e nós do cluster e as expõe no servidor de API do Kubernetes por meio da API de Métricas. Essas métricas são usadas por outros componentes do Kubernetes para fins de escalonamento automático e ajuste de recursos.
 
-### Instalação
+## Instalação
 Normalmente quando estamos trabalhando com o Kubernetes nas nuvens ou Kubernetes gerenciado (GCP, GKE, EKS, AKS)o metrics-server já vem instalado por padrão, o que não é o caso para quando estamos trabalhando no ***kind***. Além disso, o metrics-server exige uma conexão segura em todos os clusters, exigindo o TLS. Em **ambiente de desenvolvimento**, é possível ignorar o uso do TLS. A seguir o passo-a-passo para instalar o metrics-server no kind em ambiente de desenvolvimento:
 1. Execute o seguinte comando dentro de uma pasta específica para o Kubernetes (e.g. **k8s/**). Esse comando irá fazer o download do arquivo components.yaml
 `wget https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.7.0/components.yaml`
@@ -733,7 +733,7 @@ spec:
     - --kubelet-use-node-status-port
     - --metric-resolution=15s
 ```
-5. Inclua `--kubelet-insecure-tls` logo abaixo de `--kubelet-use-node-status-port`. Resultado:
+5. Inclua `--kubelet-insecure-tls` logo abaixo de `--kubelet-use-node-status-port`. <br>**Resultado:**
 ```yaml
 spec:
   containers:
