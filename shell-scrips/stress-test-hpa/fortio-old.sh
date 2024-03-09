@@ -1,0 +1,1 @@
+kubectl run -it --generator=run-pod/v1 fortio --rm --image=fortio/fortio -- load -qps 800 -t 300s -c 70 "http://goserver-service/healthz"

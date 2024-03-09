@@ -31,9 +31,8 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 12. [Health check](#health-check)
 13. [Configurando Probes](#configurando-probes)
 14. [Healthz, livez e readyz](#healthz-livez-e-readyz)
-15. [HPA](#hpa)
-16. [Dicas](#dicas)
-17. [Para lembrar](#para-lembrar)
+15. [Dicas](#dicas)
+16. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -704,6 +703,136 @@ As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um 
 - `kubectl describe <nome-do-pod>`
 
 [Voltar para o sumário](#sumário)
+
+
+# HPA - Horizontal POD Autoscaler
+HPA (Horizontal POD Autoscale) é um controlador que escala automaticamente o número de Pods em um Deployment, Replica Set ou StatefulSet com base em uma métrica (como CPU, memória, etc.) que são coletadas em intervalos regulares.
+
+O HPA usa informações do Metrics Server para detectar o aumento no uso de recursos e responde escalando a carga de trabalho. Isso é especialmente útil nas arquiteturas de microsserviços e dá ao cluster Kubernetes a capacidade de escalar seu deployment com base em métricas como a utilização da CPU.
+
+Porém, é importante notar que o _autoscaling_ funciona melhor para aplicativos sem estado ou stateless, especialmente aqueles capazes de ter várias instâncias da aplicação em execução e aceitando tráfego em paralelo.
+
+**FONTES:**
+- [Como Escalar Automaticamente suas Cargas de Trabalho no Kubernetes da DigitalOcean](https://www.digitalocean.com/community/tutorials/como-escalar-automaticamente-suas-cargas-de-trabalho-no-kubernetes-da-digitalocean-pt)
+- [https://www.azurebrasil.cloud/kubernetes-diminuindo-custos-na-nuvem-autoscaler-hpa/](https://www.azurebrasil.cloud/kubernetes-diminuindo-custos-na-nuvem-autoscaler-hpa/)
+
+[Voltar para o sumário](#sumário)
+
+# Metrics Server
+Metrics Server nada mais é do que um componente do Kubernetes que coleta métricas, como o uso de CPU e memória, dos pods e nós do cluster e as expõe no servidor de API do Kubernetes por meio da API de Métricas. Essas métricas são usadas por outros componentes do Kubernetes para fins de escalonamento automático e ajuste de recursos.
+
+## Instalação
+Normalmente quando estamos trabalhando com o Kubernetes nas nuvens ou Kubernetes gerenciado (GCP, GKE, EKS, AKS)o metrics-server já vem instalado por padrão, o que não é o caso para quando estamos trabalhando no ***kind***. Além disso, o metrics-server exige uma conexão segura em todos os clusters, exigindo o TLS. Em **ambiente de desenvolvimento**, é possível ignorar o uso do TLS. A seguir o passo-a-passo para instalar o metrics-server no kind em ambiente de desenvolvimento:
+1. Execute o seguinte comando dentro de uma pasta específica para o Kubernetes (e.g. **k8s/**). Esse comando irá fazer o download do arquivo components.yaml
+`wget https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.7.0/components.yaml`
+2. (Opcional) Renomeie o arquivo para "metrics-server.yaml"
+3. Encontre o trecho `kind: Deployment`
+4. Vá até
+```yaml
+spec:
+  containers:
+  - args:
+    - --cert-dir=/tmp
+    - --secure-port=4443
+    - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+    - --kubelet-use-node-status-port
+    - --metric-resolution=15s
+```
+5. Inclua `--kubelet-insecure-tls` logo abaixo de `--kubelet-use-node-status-port`. <br>**Resultado:**
+```yaml
+spec:
+  containers:
+  - args:
+    - --cert-dir=/tmp
+    - --secure-port=4443
+    - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+    - --kubelet-use-node-status-port
+    - --kubelet-insecure-tls
+    - --metric-resolution=15s
+```
+6. Execute `kubectl apply -f metrics-server.yaml`
+7. Verifique se o `metrics-server` está funcionando com o comando `kubectl get apiservices`. Em seguida encontre o service `kube-system/metrics-server`, deve estar como disponível (i.e. AVAILABLE = True).
+
+[Voltar para o sumário](#sumário)
+
+
+# Recursos (*Resources*)
+No **Kubernetes** os recursos definidos indicam qual é o mínimo para que o container funcione. Definimos esses valores em `requests` dentro de `resources`, passando os valores para os campos `cpu` e `memory` em unidades de milicores.
+
+Para entender as unidades de medidas utilizadas para definir a capacidade dos recursos que serão utilizados no Kubernetes no campo `cpu`, precisamos entender o que é **vCPU** e **milicores**. `vCPU` significa ***virtual Central Processing Unit***, que nada mais é do que uma CPU virtual que possui a mesma capacidade de processamento do que uma CPU física. Já **milicores** significa milisegundos de CPU, pode-se entender que <u>**milicores** é a milésima parte de um Core de CPU</u>, logo **1.000 (mil) milicores** é igual a **1 Core de CPU** que é igual a **1 vCPU**. A unidade de medida de processamento milicores é representada pela letra `m` e serve como um controle fino dos recursos de processamento que serão utilizados pelo container.
+
+No campo `memory` informamos a quantidade mínima de memória necessária para o container. São utilizadas as unidades binárias que representam múltiplos de 1024, ou seja, Ki (Kibibytes), Mi (Mebibytes), Gi (Gibibytes), etc. Em palavras simples, 1KiB (um kibibyte) é o mesmo que dizer 1KB (um kilobyte), porém utilizasse a base binária, kibi, para evitar confusões e ambiguidades, já que 1KB são 1.000 bytes e 1KiB são, exatamente, 1.024 bytes, logo usar as bases binárias evita essa perda de 24 bytes quando fazemos a conversão ([Ver a tabela de perda de Bytes](#tabelas-das-unidades-binárias)).
+
+Também podemos definir o limite de recursos que serão utilizados, ou seja, até qual quantidade que o contaiter podeconsumir de recursos. Essa especificação é passada no campo `limits`, também dentro do campo `resources`, que também possui os campos `cpu` e `memory`.
+
+É importante salientar que não devemos permitir que a soma dos limites ultrapasse a quantidade de recursos disponíveis, por exemplo, imagine que temos 3 vCPU para usar de recurso e cada container consome 100m (ou 0.1 vCPU), logo, podemos subir 30 desses containeres. Quando definimos um limite de 500m (ou 0.5 vCPU), os containeres podem não consumir apenas os 100m, se estiverem trabalhando no limite irão consumir **até** 500m, sendo assim <u>temos que realizar a conta com o limite</u>, desta forma poderemos subir **até** 6 containeres sem ultrapassar a quantidade de recursos disponíveis e não mais 30.
+
+[Voltar para o sumário](#sumário)
+
+
+## Tabelas das unidades binárias
+
+**Tabelas das unidades binárias**
+
+| Símbolo | Nome Completo | Valor em Bytes                                 |
+| ------- | ------------- | ---------------------------------------------- |
+| KiB     | Kibibyte      | 1024 (2^10)                                    |
+| MiB     | Mebibyte      | 1024 * 1024 (2^20)                             |
+| GiB     | Gibibyte      | 1024 * 1024 * 1024 (2^30)                      |
+| TiB     | Tebibyte      | 1024 * 1024 * 1024 * 1024 (2^40)               |
+| PiB     | Pebibyte      | 1024 * 1024 * 1024 * 1024 * 1024 (2^50)        |
+| EiB     | Exbibyte      | 1024 * 1024 * 1024 * 1024 * 1024 * 1024 (2^60) |
+
+Tabela 1: Mostra o símbolo, nome e o valor em Bytes de cada unidade binária.
+
+
+| Unidade        | Equivalente em Bytes                        |
+| -------------- | ------------------------------------------- |
+| Byte (B)       | 1 Byte                                      |
+| Kibibyte (KiB) | 1.024 Bytes                                 |
+| Mebibyte (MiB) | 1.048.576 Bytes (1.024 KiB)                 |
+| Gibibyte (GiB) | 1.073.741.824 Bytes (1.024 MiB)             |
+| Tebibyte (TiB) | 1.099.511.627.776 Bytes (1.024 GiB)         |
+| Pebibyte (PiB) | 1.125.899.906.842.624 Bytes (1.024 TiB)     |
+| Exbibyte (EiB) | 1.152.921.504.606.846.976 Bytes (1.024 PiB) |
+
+Tabela 2: Tabela das unidades binárias e o equivalente em Bytes.
+
+
+**Comparativo entre as unidades binárias e as unidades decimais**
+
+| Unidade Binária | Equivalente em Bytes                        | Unidade Decimal | Equivalente em Bytes                       |
+| --------------- | ------------------------------------------- | --------------- | ------------------------------------------ |
+| Byte (B)        | 1 Byte                                      | Byte (B)        | 1 Byte                                     |
+| Kibibyte (KiB)  | 1.024 Bytes                                 | Kilobyte (KB)   | 1.000 Bytes                                |
+| Mebibyte (MiB)  | 1.048.576 Bytes (1.024 KiB)                 | Megabyte (MB)   | 1.000.000 Bytes (1.000 KB)                 |
+| Gibibyte (GiB)  | 1.073.741.824 Bytes (1.024 MiB)             | Gigabyte (GB)   | 1.000.000.000 Bytes (1.000 MB)             |
+| Tebibyte (TiB)  | 1.099.511.627.776 Bytes (1.024 GiB)         | Terabyte (TB)   | 1.000.000.000.000 Bytes (1.000 GB)         |
+| Pebibyte (PiB)  | 1.125.899.906.842.624 Bytes (1.024 TiB)     | Petabyte (PB)   | 1.000.000.000.000.000 Bytes (1.000 TB)     |
+| Exbibyte (EiB)  | 1.152.921.504.606.846.976 Bytes (1.024 PiB) | Exabyte (EB)    | 1.000.000.000.000.000.000 Bytes (1.000 PB) |
+
+Tabela 3: Comparativo entre unidades binárias e unidades decimais.
+
+Observe que quanto maior a unidade binária, mais Bytes são "perdidos" em relação a equivalente decimal, como ilustra a tabela abaixo.
+
+**Perda de Bytes entre unidades binárias e decimais**
+
+| Unidade Binária | Unidade Decimal | Diferença | Diferença em Bytes            |
+| --------------- | --------------- | --------- | ----------------------------- |
+| Byte (B)        | Byte (B)        | 0 Bytes   | 0 Bytes                       |
+| Kibibyte (KiB)  | Kilobyte (KB)   | 24 Bytes  | 24 Bytes                      |
+| Mebibyte (MiB)  | Megabyte (MB)   | 47,5 KiB  | 48.576 Bytes                  |
+| Gibibyte (GiB)  | Gigabyte (GB)   | 70,3 MiB  | 73.741.824 Bytes              |
+| Tebibyte (TiB)  | Terabyte (TB)   | 93,1 GiB  | 99.511.627.776 Bytes          |
+| Pebibyte (PiB)  | Petabyte (PB)   | 112,6 TiB | 125.899.906.842.624 Bytes     |
+| Exbibyte (EiB)  | Exabyte (EB)    | 125,8 PiB | 152.921.504.606.846.976 Bytes |
+
+<u>Observações:</u>
+1. A vírgula é a separadora de decimais e o ponto é o separador de milhares.
+2. Os cálculos são aproximados, para um valor exato use sempre a diferença em Bytes.
+
+[Voltar para o sumário](#sumário)
+
 
 # Para lembrar
 - Para criar um pod ou qualquer objeto Kubernetes utilizamos os arquivos .yaml (ou .yml) para passar as especificações e depois executaamos o comando `kubectl apply -f <filepath>` para efetivamente criar o objeto Kubernetes.
