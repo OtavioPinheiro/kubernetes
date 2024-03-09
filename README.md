@@ -31,8 +31,9 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 12. [Health check](#health-check)
 13. [Configurando Probes](#configurando-probes)
 14. [Healthz, livez e readyz](#healthz-livez-e-readyz)
-15. [Dicas](#dicas)
-16. [Para lembrar](#para-lembrar)
+15. [HPA](#hpa)
+16. [Dicas](#dicas)
+17. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -676,6 +677,24 @@ No Kubernetes quando vamos definir um Probe, como, por exemplo, o *livenessProbe
 2. **/livez**: Este endpoint verifica se o serviço está "vivo" e funcionando, mas pode ser mais abrangente do que o /healthz. Ele pode realizar verificações adicionais, como conexão com bancos de dados ou serviços externos. É usado para avaliar a "vivacidade" do serviço em um nível mais profundo.
    
 3. **/readyz**: Este endpoint é usado para verificar se o serviço está "pronto" para receber tráfego. Ele pode realizar verificações específicas para determinar se o serviço está em um estado de leitura para atender às solicitações. Isso é particularmente útil durante o processo de inicialização de um serviço, permitindo que o sistema de orquestração aguarde até que o serviço esteja totalmente pronto.
+
+[Voltar para o sumário](#sumário)
+
+# HPA
+O HPA é uma funcionalidade do Kubernetes que permite o dimensionamento automático de recursos de carga de trabalho, como **Deployments** ou **StatefulSets**, para atender à demanda. Isso é feito através do ajuste do número de **Pods** (a menor e mais básica unidade de computação implantável em Kubernetes) com base em métricas observadas, como o uso de CPU ou memória.
+
+O HPA funciona da seguinte maneira:
+1. O HPA observa a métrica (ou métricas) especificada.
+2. Se a métrica observada exceder o limite definido, o HPA aumentará o número de Pods.
+3. Se a métrica observada estiver abaixo do limite definido, o HPA diminuirá o número de Pods.
+
+Isso é conhecido como **dimensionamento horizontal**, que é a resposta ao aumento da carga através do deployment de mais Pods. Isso é diferente do **dimensionamento vertical**, que para o Kubernetes significaria atribuir mais recursos (por exemplo: memória ou CPU) aos Pods que já estão em execução para a carga de trabalho.
+
+O HPA é uma ferramenta poderosa para manter as aplicações resilientes e disponíveis, mesmo durante picos de tráfego inesperados. Ele ajuda a otimizar o uso de recursos, garantindo que você tenha capacidade suficiente para atender à demanda sem pagar por recursos não utilizados.
+
+**FONTES:**
+- [Horizontal Pod Autoscaling | Kubernetes](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
+- [HorizontalPodAutoscaler Walkthrough | Kubernetes](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/)
 
 [Voltar para o sumário](#sumário)
 
