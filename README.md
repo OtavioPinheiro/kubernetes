@@ -31,9 +31,11 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 12. [Health check](#health-check)
 13. [Configurando Probes](#configurando-probes)
 14. [Healthz, livez e readyz](#healthz-livez-e-readyz)
-15. [HPA](#hpa)
-16. [Dicas](#dicas)
-17. [Para lembrar](#para-lembrar)
+15. [HPA](#hpa---horizontal-pod-autoscaler)
+16. [Metrics server](#metrics-server)
+17. [Recursos](#recursos-resources)
+18. [Dicas](#dicas)
+19. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -680,40 +682,25 @@ No Kubernetes quando vamos definir um Probe, como, por exemplo, o *livenessProbe
 
 [Voltar para o sumário](#sumário)
 
-# HPA
-O HPA é uma funcionalidade do Kubernetes que permite o dimensionamento automático de recursos de carga de trabalho, como **Deployments** ou **StatefulSets**, para atender à demanda. Isso é feito através do ajuste do número de **Pods** (a menor e mais básica unidade de computação implantável em Kubernetes) com base em métricas observadas, como o uso de CPU ou memória.
+# HPA - Horizontal POD Autoscaler
+HPA (Horizontal POD Autoscale) é um controlador que escala automaticamente o número de **Pods** em um **Deployment**, **Replica Set** ou **StatefulSet** com base em uma métrica (como CPU, memória, etc.) que são coletadas em intervalos regulares.
 
 O HPA funciona da seguinte maneira:
 1. O HPA observa a métrica (ou métricas) especificada.
 2. Se a métrica observada exceder o limite definido, o HPA aumentará o número de Pods.
 3. Se a métrica observada estiver abaixo do limite definido, o HPA diminuirá o número de Pods.
 
-Isso é conhecido como **dimensionamento horizontal**, que é a resposta ao aumento da carga através do deployment de mais Pods. Isso é diferente do **dimensionamento vertical**, que para o Kubernetes significaria atribuir mais recursos (por exemplo: memória ou CPU) aos Pods que já estão em execução para a carga de trabalho.
+Isso é diferente do **dimensionamento vertical**, que para o Kubernetes significaria atribuir mais recursos (por exemplo: memória ou CPU) aos Pods que já estão em execução para a carga de trabalho.
+
+O HPA usa informações do Metrics Server para detectar o aumento no uso de recursos e responde escalando a carga de trabalho. Isso é especialmente útil nas arquiteturas de microsserviços e dá ao cluster Kubernetes a capacidade de escalar seu deployment com base em métricas como a utilização da CPU.
+
+Porém, é importante notar que o _autoscaling_ funciona melhor para aplicativos sem estado ou _stateless_, especialmente aqueles capazes de ter várias instâncias da aplicação em execução e aceitando tráfego em paralelo.
 
 O HPA é uma ferramenta poderosa para manter as aplicações resilientes e disponíveis, mesmo durante picos de tráfego inesperados. Ele ajuda a otimizar o uso de recursos, garantindo que você tenha capacidade suficiente para atender à demanda sem pagar por recursos não utilizados.
 
 **FONTES:**
 - [Horizontal Pod Autoscaling | Kubernetes](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
 - [HorizontalPodAutoscaler Walkthrough | Kubernetes](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/)
-
-[Voltar para o sumário](#sumário)
-
-# Dicas
-As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um serviço, pod, deployments, etc. Para verificar os logs de erros e/ou tentar realizar o processo de *debug* existem alguns comandos mais usados para auxiliar nesta tarefa. Os comandos mais usados para se obter informações de pods são:
-- `kubectl logs <nome-do-pod>`
-- `kubectl describe <nome-do-pod>`
-
-[Voltar para o sumário](#sumário)
-
-
-# HPA - Horizontal POD Autoscaler
-HPA (Horizontal POD Autoscale) é um controlador que escala automaticamente o número de Pods em um Deployment, Replica Set ou StatefulSet com base em uma métrica (como CPU, memória, etc.) que são coletadas em intervalos regulares.
-
-O HPA usa informações do Metrics Server para detectar o aumento no uso de recursos e responde escalando a carga de trabalho. Isso é especialmente útil nas arquiteturas de microsserviços e dá ao cluster Kubernetes a capacidade de escalar seu deployment com base em métricas como a utilização da CPU.
-
-Porém, é importante notar que o _autoscaling_ funciona melhor para aplicativos sem estado ou stateless, especialmente aqueles capazes de ter várias instâncias da aplicação em execução e aceitando tráfego em paralelo.
-
-**FONTES:**
 - [Como Escalar Automaticamente suas Cargas de Trabalho no Kubernetes da DigitalOcean](https://www.digitalocean.com/community/tutorials/como-escalar-automaticamente-suas-cargas-de-trabalho-no-kubernetes-da-digitalocean-pt)
 - [https://www.azurebrasil.cloud/kubernetes-diminuindo-custos-na-nuvem-autoscaler-hpa/](https://www.azurebrasil.cloud/kubernetes-diminuindo-custos-na-nuvem-autoscaler-hpa/)
 
@@ -834,6 +821,12 @@ Observe que quanto maior a unidade binária, mais Bytes são "perdidos" em rela�
 
 [Voltar para o sumário](#sumário)
 
+# Dicas
+As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um serviço, pod, deployments, etc. Para verificar os logs de erros e/ou tentar realizar o processo de *debug* existem alguns comandos mais usados para auxiliar nesta tarefa. Os comandos mais usados para se obter informações de pods são:
+- `kubectl logs <nome-do-pod>`
+- `kubectl describe <nome-do-pod>`
+
+[Voltar para o sumário](#sumário)
 
 # Para lembrar
 - Para criar um pod ou qualquer objeto Kubernetes utilizamos os arquivos .yaml (ou .yml) para passar as especificações e depois executaamos o comando `kubectl apply -f <filepath>` para efetivamente criar o objeto Kubernetes.
