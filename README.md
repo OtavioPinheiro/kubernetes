@@ -31,8 +31,9 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 12. [Health check](#health-check)
 13. [Configurando Probes](#configurando-probes)
 14. [Healthz, livez e readyz](#healthz-livez-e-readyz)
-15. [Dicas](#dicas)
-16. [Para lembrar](#para-lembrar)
+15. [HPA](#hpa)
+16. [Dicas](#dicas)
+17. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
