@@ -821,6 +821,88 @@ Observe que quanto maior a unidade binária, mais Bytes são "perdidos" em rela�
 
 [Voltar para o sumário](#sumário)
 
+# Volumes no Kubernetes
+Em Kubernetes, os volumes são unidades de armazenamento persistente que podem ser usadas para armazenar dados que precisam ser acessíveis por vários pods, mesmo após a reinicialização ou migração dos pods. Isso é importante para aplicações que precisam armazenar dados de forma permanente, como bancos de dados, caches ou arquivos de configuração.
+
+**Tipos de Volumes:**
+Existem **dois** tipos principais de volumes em Kubernetes:
+
+- **Volumes Efêmeros(temporários):** São volumes que só existem enquanto o pod estiver em execução. Quando o pod é excluído, o volume efêmero também é excluído.
+- **Volumes Persistentes:** São volumes que persistem mesmo após a exclusão do pod. Os volumes persistentes são provisionados por um administrador de cluster e podem ser usados por vários pods.
+
+## Provisionamento de Volumes Persistentes:
+Os volumes persistentes podem ser provisionados de várias maneiras, como:
+- **Provisionamento manual:** O administrador do cluster cria manualmente o volume persistente e o provisiona para um pod.
+- **Provisionamento automático:** O Kubernetes pode provisionar automaticamente um volume persistente para um pod com base em uma solicitação de volume persistente (PVC).
+
+## Uso de Volumes em Pods:
+Os volumes podem ser usados em pods de várias maneiras, como:
+- **Montagem de volumes:** Um volume pode ser montado em um pod, o que significa que o pod pode acessar os dados no volume como se estivessem armazenados no sistema de arquivos local.
+- **Injeção de volumes:** Um volume pode ser injetado em um pod como um parâmetro de contêiner, o que significa que o contêiner pode acessar os dados no volume através de variáveis de ambiente.
+
+## Vantagens de usar Volumes:
+- **Armazenamento persistente:** Os dados armazenados em volumes persistentes não são perdidos quando o pod é reiniciado ou migrado.
+- **Compartilhamento de dados:** Os volumes podem ser compartilhados entre vários pods, o que facilita o compartilhamento de dados entre diferentes aplicações.
+- **Escalabilidade:** Os volumes persistentes podem ser facilmente escalados para atender às necessidades de armazenamento de suas aplicações.
+
+Os volumes são uma parte essencial do Kubernetes e permitem que você armazene dados de forma persistente e compartilhe-os entre vários pods. Isso torna o Kubernetes uma plataforma ideal para aplicações que precisam de armazenamento confiável e escalável.
+
+[Voltar para o sumário](#sumário)
+
+## _PersistentVolumes_
+_PersistentVolumes_ (`PVs`) são recursos de armazenamento no cluster Kubernetes que foram provisionados por um administrador. Eles são uma parte da camada de armazenamento no Kubernetes e fornecem uma maneira para os desenvolvedores consumirem o armazenamento abstrato sem se preocupar com os detalhes de como esse armazenamento é fornecido.
+
+Os `PVs` são usados para gerenciar o armazenamento de dados em um cluster Kubernetes. Eles permitem que os desenvolvedores solicitem armazenamento de uma maneira consistente, independentemente do ambiente de back-end, seja ele AWS, Azure, GCP ou armazenamento local. Isso é feito usando ***PersistentVolumeClaims*** (`PVCs`), que são solicitações para armazenamento pelos usuários.
+
+A principal vantagem dos `PVs` é que eles abstraem os detalhes do armazenamento subjacente. Isso significa que os desenvolvedores não precisam se preocupar com os detalhes específicos do armazenamento que estão usando. Além disso, os `PVs` <u>são independentes de `pod`</u>, o que significa que <u>os dados podem persistir além do ciclo de vida de um `pod` individual</u>. Isso é **útil para** cargas de trabalho que requerem armazenamento durável, como **bancos de dados**.
+
+**Exemplo:**
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv0003
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: slow
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  nfs:
+    path: /tmp
+    server: 172.17.0.2
+```
+
+Neste exemplo, um `PV` chamado `pv0003` é criado com uma capacidade de 5Gi. Ele usa o NFS (_Network File System_) como armazenamento subjacente e é montado no caminho `/tmp` no servidor **NFS** `172.17.0.2`. O `PV` **é acessível como um sistema de arquivos e pode ser lido e escrito por um pod (ReadWriteOnce)**. Quando o `PVC` que está usando este `PV` é excluído, **o `PV` será reciclado e disponibilizado para reutilização(persistentVolumeReclaimPolicy: Recycle)**.
+
+### NFS(_Network File System_)
+**NFS** significa "_Network File System_". É um sistema de arquivos distribuído que permite que vários computadores acessem o mesmo conjunto de arquivos em uma rede.
+
+#### Vantagens do uso do NFS com o Kubernetes:
+1 - **Compartilhamento de dados:** O NFS facilita o compartilhamento de dados entre pods em diferentes nós do cluster.
+2 - **Escalabilidade:** O NFS é escalável e pode ser usado para armazenar grandes conjuntos de dados em clusters grandes.
+3 - **Simplicidade:** O NFS é relativamente fácil de configurar e usar.
+
+#### Desvantagens do uso do NFS com o Kubernetes:
+1 - **Desempenho:** O desempenho do NFS pode ser menor do que o de outros sistemas de armazenamento, como o local storage.
+2 - **Segurança:** O NFS pode ser menos seguro do que outros sistemas de armazenamento, pois os dados são transmitidos pela rede.
+
+#### Casos de uso do NFS com o Kubernetes:
+- **Armazenamento de dados persistentes:** O NFS pode ser usado para armazenar dados persistentes que precisam ser acessados por vários pods em diferentes nós do cluster.
+- **Compartilhamento de configurações:** O NFS pode ser usado para compartilhar configurações entre pods em diferentes nós do cluster.
+- **Armazenamento de logs:** O NFS pode ser usado para armazenar logs de pods em um local central.
+
+#### Considerações ao usar o NFS com o Kubernetes:
+**Desempenho:** Se o desempenho for um problema, você pode considerar o uso de um sistema de armazenamento diferente, como o local storage.
+**Segurança:** Se a segurança for um problema, você pode tomar medidas para proteger o NFS, como usar criptografia e firewalls.
+
+[Voltar para o sumário](#sumário)
+
 # Dicas
 As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um serviço, pod, deployments, etc. Para verificar os logs de erros e/ou tentar realizar o processo de *debug* existem alguns comandos mais usados para auxiliar nesta tarefa. Os comandos mais usados para se obter informações de pods são:
 - `kubectl logs <nome-do-pod>`
