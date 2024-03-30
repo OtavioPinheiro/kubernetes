@@ -34,8 +34,13 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 15. [HPA](#hpa---horizontal-pod-autoscaler)
 16. [Metrics server](#metrics-server)
 17. [Recursos](#recursos-resources)
-18. [Dicas](#dicas)
-19. [Para lembrar](#para-lembrar)
+18. [Volumes](#volumes-no-kubernetes)
+    1. [Provisionamento de volumes](#provisionamento-de-volumes-persistentes)
+    2. [Uso de volumes em Pods](#uso-de-volumes-em-pods)
+    3. [Vantagens de usar volumes](#vantagens-de-usar-volumes)
+    4. [PersistentVolumes](#persistentvolumes)
+19. [Dicas](#dicas)
+20. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
