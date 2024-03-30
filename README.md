@@ -39,6 +39,11 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
     2. [Uso de volumes em Pods](#uso-de-volumes-em-pods)
     3. [Vantagens de usar volumes](#vantagens-de-usar-volumes)
     4. [PersistentVolumes](#persistentvolumes)
+    5. [Tipos de acessos a Volumes no Kubernetes](#tipos-de-acessos-a-volumes-no-kubernetes)
+      1. [ReadWriteOnce](#readwriteonce-rwo)
+      2. [ReadWriteMany](#readwritemany-rwx)
+      3. [ReadOnlyMany](#readonlymany-rox)
+      4. [ReadWriteMany-PodAffinity](#readwritemany-podaffinity-rwx-pa)
 19. [Dicas](#dicas)
 20. [Para lembrar](#para-lembrar)
 
@@ -63,6 +68,8 @@ Os benefícios de ser utilizar o Kubernetes são, basicamente, o escalonamento, 
 6. **Gerenciamento de configuração e Gerenciamento de segredos**: O Kubernetes permite armazenar e gerenciar informações confidenciais, como senhas, tokens *OAuth* e chaves SSH. Você pode implantar e atualizar segredos e configurações de aplicações sem precisar reconstruir as imagens dos contêineres e sem expor segredos nas configurações.
 
 **FONTE:** [Kubernetes - Documentação](https://kubernetes.io/pt-br/docs/concepts/overview/what-is-kubernetes/)
+
+[Voltar para o sumário](#sumário)
 
 ## O que o Kubernetes não é
 É importante lembrar que o Kubernetes não se trata de um sistema de serviço como plataforma (*PaaS*), apesar de possuir elementos desse tipo de serviço por operar no nível de contêiner, como balenceamento de carga, escalonamento, implantação, interação do usuário com as suas soluções de *logging*, monitoramento e alerta. Portanto, o Kubernetes:
@@ -905,6 +912,75 @@ Neste exemplo, um `PV` chamado `pv0003` é criado com uma capacidade de 5Gi. Ele
 #### Considerações ao usar o NFS com o Kubernetes:
 **Desempenho:** Se o desempenho for um problema, você pode considerar o uso de um sistema de armazenamento diferente, como o local storage.
 **Segurança:** Se a segurança for um problema, você pode tomar medidas para proteger o NFS, como usar criptografia e firewalls.
+
+[Voltar para o sumário](#sumário)
+
+## Tipos de acessos a Volumes no Kubernetes
+No Kubernetes, os volumes são recursos que fornecem armazenamento persistente para pods. Ao criar um volume, você precisa especificar o tipo de acesso que os pods terão ao volume. Existem dois tipos principais de acesso a volumes, _ReadWriteOnce_ (RWO) e _ReadWriteMany_ (RWX).
+
+[Voltar para o sumário](#sumário)
+
+### ReadWriteOnce (RWO)
+Esse tipo de acesso é o padrão para volumes persistentes em muitos sistemas de armazenamento, incluindo sistemas de arquivos locais e alguns provedores de armazenamento em nuvem. ***RWO*** especifica que o volume pode ser montado como somente leitura ou leitura e escrita por um único nó do Kubernetes.
+
+Quando um volume é configurado com a política _ReadWriteOnce_, ele pode ser montado por um único nó de um cluster Kubernetes em um determinado momento. **Isso significa que o volume pode ser montado para leitura e gravação apenas por um único `pod` em um único nó.**
+
+As **vantagens** de se utilizar esse tipo de acesso são, a **maior segurança**, porque **apenas um pod pode acessar os dados do volume**; e o **maior desempenho**, porque **não há necessidade de sincronizar os dados** entre vários `pods`. Porém, como **desvantagens**, há a **limitação de escalabilidade**, pois como o volume só pode ser montado por um único nó por vez, a **escalabilidade horizontal dos aplicativos** que dependem de acesso simultâneo a um volume de dados compartilhado **é limitada**, para cenários que exigem acesso simultâneo de leitura e gravação de vários pods, outras políticas de acesso, como _ReadOnlyMany_ ou _ReadWriteMany_, podem ser mais apropriadas. Outra desvantagem do _RWO_ é se o `pod` que monta o volume falhar.
+
+Em resumo, o modo _ReadWriteOnce_ é útil quando você precisa garantir acesso exclusivo a um volume persistente por um único `pod` em um único nó, mas pode não ser adequado para todos os casos de uso, especialmente aqueles que exigem escalabilidade horizontal e acesso simultâneo de vários pods.
+
+[Voltar para o sumário](#sumário)
+
+### ReadWriteMany (RWX)
+Esse método de acesso permite que o volume seja montado como somente leitura ou leitura e escrita por múltiplos `pods` em múltiplos nós do Kubernetes simultaneamente. Logo, isso possibilita que vários pods acessem o volume para leitura e gravação ao mesmo tempo, **proporcionando alta disponibilidade e escalabilidade** para aplicativos que exigem acesso concorrente a dados compartilhados, **facilitando a escalabilidade horizontal** de aplicativos distribuídos, sendo essa uma das **vantagens** desse tipo de acesso. O _RWX_ apresenta como desvantagem a dificuldade em encontrar provedores de armazenamento que oferecem suporte nativo ao modo e, aqueles que possuem suporte podem pedir configurações específicas para implementar o acesso de leitura e gravação múltipla e/ou cobrar mais caro pelo suporte a esse tipo de acesso. Além de apresentar **menor desempenho**, **porque os dados precisam ser sincronizados entre os** `pods`.
+
+Em resumo, o modo _ReadWriteMany_ é útil para cenários em que vários `pods` precisam acessar o mesmo volume de dados compartilhado simultaneamente, proporcionando alta disponibilidade, escalabilidade horizontal e flexibilidade para aplicativos distribuídos no Kubernetes.
+
+[Voltar para o sumário](#sumário)
+
+Existem outros tipos de acessos menos conhecidos, mas que vale a pena mencionar, que são: _ReadOnlyMany_ (ROX) e _ReadWriteMany-PodAffinity_ (RWX-PA).
+
+### ReadOnlyMany (ROX)
+É um tipo de acesso que permite que vários `pods`, em múltiplos nós do Kubernetes, montem o volume ao mesmo tempo, mas apenas um pod pode modificar os dados do volume, **sendo útil para cenários em que os dados são compartilhados entre vários** `pods`, mas não devem ser modificados por nenhum deles, permitindo que aplicativos distribuídos acessem dados compartilhados de forma eficiente e consistente, **sem risco de alterações acidentais nos dados**, garantindo a integridade e a consistência dos dados compartilhados entre vários pods. Aind possui a vantagem de disponibilidade dos dados do volume mesmo se um pod falhar, já que os outros pods ainda vão poder acessar o volume.
+
+Assim como o modo ***RWX***, o ***ROX*** possui a dificuldades em alguns sistemas de armazenamento em nuvem e clusters Kubernetes, pois podem exigir configurações específicas ou soluções de terceiros para implementar o acesso somente leitura compartilhado. Vale lembrar que o desempenho do volume pode ser menor do que o de volumes _RWO_, especialmente se vários `pods` estiverem acessando o volume ao mesmo tempo.
+
+O _ROX_ é uma boa opção para os seguintes casos:
+
+- **Aplicações que precisam de acesso simultâneo a dados**: Se sua aplicação precisa que vários pods acessem os mesmos dados ao mesmo tempo, o _ROX_ pode ser uma boa opção.
+- **Aplicações que precisam de tolerância a falhas**: Se sua aplicação precisa ser tolerante a falhas, o _ROX_ pode ser uma boa opção, pois outros pods ainda podem acessar o volume se um `pod` falhar.
+- **Aplicações que precisam de segurança**: Se sua aplicação precisa de um alto nível de segurança, o _ROX_ pode ser uma boa opção, pois os dados do volume só podem ser modificados por um `pod`.
+
+**Exemplos de uso de ROX**:
+
+- **Banco de dados**: Um banco de dados pode ser configurado como um volume _ROX_ para permitir que vários pods acessem o banco de dados ao mesmo tempo.
+- **Armazenamento de logs**: Os logs da aplicação podem ser armazenados em um volume _ROX_ para permitir que vários `pods` acessem os logs ao mesmo tempo.
+- **Armazenamento de arquivos de configuração**: Os arquivos de configuração da aplicação podem ser armazenados em um volume _ROX_ para permitir que vários `pods` acessem os arquivos de configuração ao mesmo tempo.
+
+Em resumo, o modo _ReadOnlyMany_ oferece a capacidade de montar volumes somente leitura por múltiplos `pods` em múltiplos nós do Kubernetes, proporcionando uma maneira eficiente e segura de compartilhar dados entre aplicativos distribuídos.
+
+[Voltar para o sumário](#sumário)
+
+### ReadWriteMany-PodAffinity (RWX-PA)
+_RWX-PA_, ou _ReadWriteMany-PodAffinity_, é um tipo de acesso a volumes no Kubernetes que permite que vários pods montem o mesmo volume ao mesmo tempo e modifiquem os dados do volume, similar ao _ReadWriteMany_ (_RWX_). No entanto, ao contrário do _RWX_, o _RWX-PA_ impõe uma restrição adicional: **os pods que montam o volume precisam estar no mesmo nó**. Em palavras simples, esse tipo de acesso é igual ao _RWX_, mas com a restrição de que os `pods` que montam o volume devem estar no mesmo nó.
+
+Para que os `pods` fiquem no mesmo nó, existe um conceito chamado [Afinidade de pod](), que é uma configuração no Kubernetes que permite especificar regras sobre onde os `pods` devem ser agendados dentro do cluster. Essas regras são baseadas em rótulos de nó e `pod`, e o Kubernetes tenta programar os `pods` de acordo com essas regras.
+
+As vantagens do _RWX-PA_ são:
+- **Escalabilidade e tolerância a falhas**: Vários pods podem acessar e modificar o volume simultaneamente, aumentando a escalabilidade da aplicação. Se um pod falhar, outros pods no mesmo nó ainda podem acessar o volume.
+- **Desempenho**: O acesso ao volume pode ser mais performático do que o _ROX_, pois os pods acessam o volume localmente no mesmo nó.
+- **Segurança moderada**: Embora vários `pods` possam modificar o volume, a restrição de nó único limita o acesso não autorizado.
+
+Já como desvantagens do _RWX-PA_, temos:
+- **Menos flexibilidade**: A exigência de `pods` estarem no mesmo nó limita a escalabilidade horizontal em cenários com balanceamento de carga entre nós.
+- **Complexidade de gerenciamento**: Pode ser mais complexo de gerenciar, pois é preciso considerar a afinidade de pods com o nó que armazena o volume.
+
+Sendo assim, os cenários mais adequados para se utilizar o _RWX-PA_ são cenários em que há a necessidade de acesso simultâneo com modificação por vários `pods`, onde a aplicação precisa que vários `pods` leiam e escrevam no volume ao mesmo tempo, e esses `pods` precisam estar próximos para comunicação de baixa latência. Outro cenário é o de tolerância a falhas em um único nó, onde a aplicação precisa tolerar a indisponibilidade de um nó inteiro, mas precisa de acesso contínuo ao volume.
+
+Alguns exemplos de uso de _RWX-PA_:
+- **Cache compartilhado**: Um cache de dados compartilhado por vários `pods` em execução no mesmo nó para melhorar o desempenho.
+- **Dados temporários de processamento**: Dados temporários gerados durante um processamento paralelo que precisam ser acessíveis por todos os `pods` envolvidos.
+- **Banco de dados in-memory**: Um banco de dados _in-memory_ que precisa de acesso de baixa latência por vários `pods` no mesmo nó.
 
 [Voltar para o sumário](#sumário)
 
