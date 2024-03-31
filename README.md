@@ -47,8 +47,9 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 19. [Statefulsets](#statefulsets)
 20. [Headless services](#headless-services)
 21. [Ingress](#ingress)
-22. [Dicas](#dicas)
-23. [Para lembrar](#para-lembrar)
+22. [GKE Google Kubernetes Engine](#gke-google-kubernetes-engine)
+23. [Dicas](#dicas)
+24. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
