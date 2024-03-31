@@ -1053,17 +1053,50 @@ Em resumo, o _Ingress_ no Kubernetes é uma maneira poderosa e flexível de **ge
 
 [Voltar para o sumário](#sumário)
 
+# GKE (Google Kubernetes Engine)
+O **GKE** é uma implementação gerenciada pelo Google da plataforma de orquestração de contêineres de código aberto do Kubernetes. Um ambiente do **GKE** consiste em nós, que são máquinas virtuais (VMs) do _Compute Engine_, agrupadas para formar um _cluster_. Você empacota os aplicativos (também chamados de cargas de trabalho) em contêineres. Você implanta conjuntos de contêineres como _pods_ nos nós. Use a API Kubernetes para interagir com as cargas de trabalho, incluindo administração, escalonamento e monitoramento.
+
+## Utilizando o GKE
+Para utilizar o **GKE** é necessário criar uma conta Google e solicitar o serviço **GKE**, há planos gratuitos, mas certifique-se antes de contratar qualquer coisa. Feito isso, crie um cluster Kubernetes, pode ser um com uma única máquina, certifique-se de ter instalado o `gcloud`, que é um `CLI` do Google Cloud, copie e execute o código para a conexão e definição das credenciais na máquina local, código semelhante a este: `gcloud container clusters get-credentials <nome-do-cluster> --zone us-central1-c --project <container>`.
+Em seguida execute `kubectl get nodes` para verificar se tudo ocorreu bem e `kubectl apply -f <diretório-com-os-arquivos-de-configuração-kubernetes>` para aplicar os arquivos de manifesto. Acesse o endereço IP (_EXTERNAL-IP_) do serviço criado, usando o `kubectl get svc`.
+Use o [**Helm**](https://helm.sh/pt/#:~:text=O%20que%20%C3%A9%20o%20Helm,complexa%20aplica%C3%A7%C3%A3o%20para%20o%20Kubernetes.) (gerenciador de aplicações Kubernetes) para instalar o _Ingress Nginx_ para realizar o roteamento de fluxo para os `pods` da aplicação. Execute os comandos:
+
+```bash
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+
+helm install ingress-nginx ingress-nginx/ingress-nginx
+```
+
+Após a execução do comando anterior, o `ingress-nginx` será instalado em um _Namespace_ _default_ (padrão) do Kubernetes, será apresentado um _template_ do objeto _Ingress_ na saída do terminal e tanto o serviço (`ingress-nginx-controller`) quanto o `pod` (`ingress-nginx-controller-<random-id>`) referente ao `ingress` estarão em execução.
+
+Vale lembrar que é recomendado seguir o processo de instalação do _Helm Nginx_ para o _cloud provider_ específico para ter mais segurança (recomendado para ambiente de produção) e é possível ter um _namespace_ exclusivo para executar o `ingress`, ao invés de executá-lo no mesmo _namespace_ que a da aplicação.
+
+Feito isso, crie o arquivo `ingress.yaml` e aplique-o com o `kubectl apply -f <nome-do-arquivo-ingress>`, lembrando que a versão atual do `apiVersion` do _Ingress_ é a `v1`. Em seguida, copie o _external-ip_ do serviço `ingress-nginx-controller` e cole em um serviço de servidor de nome de domínio distribuído (serviço de DNS, agindo como um proxy reverso para sites) como a **Cloudflare ©** e nomeie com `ingress`. No browser insira `<host>` definido no servidor de serviços DNS (**Cloudflare**, neste caso), sua aplicação deve ser exibida corretamente. Vale mencionar que o _host_ definido no arquivo `ingress.yaml` deve ser o mesmo host definido no servidor da **Cloudflare** (neste exemplo).
+
+**FONTES:**
+- [HELM](https://helm.sh/pt/#:~:text=O%20que%20%C3%A9%20o%20Helm,complexa%20aplica%C3%A7%C3%A3o%20para%20o%20Kubernetes.)
+- [Cloudflare](https://www.cloudflare.com/pt-br/learning/what-is-cloudflare/)
+- [Visão geral do GKE](https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview?hl=pt-br#:~:text=O%20GKE%20%C3%A9%20uma%20implementa%C3%A7%C3%A3o,de%20c%C3%B3digo%20aberto%20do%20Kubernetes.)
+- [Implantar um app em um cluster do GKE](https://cloud.google.com/kubernetes-engine/docs/deploy-app-cluster?hl=pt-br)
+- [Como criar e gerenciar projetos](https://cloud.google.com/resource-manager/docs/creating-managing-projects?hl=pt-br&visit_id=638474941812839908-2813713582&rd=1#identifying_projects)
+- [Documentação do Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs?hl=pt-br)
+- [Ingress-Nginx Controller](https://kubernetes.github.io/ingress-nginx/)
+- [Installation Guide - Quick start](https://kubernetes.github.io/ingress-nginx/deploy/#quick-start)
+
+[Voltar para o sumário](#sumário)
+
 # Dicas
-As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um serviço, pod, deployments, etc. Para verificar os logs de erros e/ou tentar realizar o processo de *debug* existem alguns comandos mais usados para auxiliar nesta tarefa. Os comandos mais usados para se obter informações de pods são:
+As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um serviço, `pod`, _deployments_, etc. Para verificar os logs de erros e/ou tentar realizar o processo de *debug* existem alguns comandos mais usados para auxiliar nesta tarefa. Os comandos mais usados para se obter informações de `pods` são:
 - `kubectl logs <nome-do-pod>`
 - `kubectl describe <nome-do-pod>`
 
 [Voltar para o sumário](#sumário)
 
 # Para lembrar
-- Para criar um pod ou qualquer objeto Kubernetes utilizamos os arquivos .yaml (ou .yml) para passar as especificações e depois executaamos o comando `kubectl apply -f <filepath>` para efetivamente criar o objeto Kubernetes.
+- Para criar um `pod` ou qualquer objeto Kubernetes utilizamos os arquivos .yaml (ou .yml) para passar as especificações e depois executaamos o comando `kubectl apply -f <filepath>` para efetivamente criar o objeto Kubernetes.
 - *ReplicaSet* é um objeto Kubernetes que ajuda o gerenciamento dos *Pods* e de suas replicas. A vantagem é que caso um *Pod* caia, o *ReplicaSet* irá construir o *Pod* novamente.
-  - Problema do *ReplicaSet* é quando atualizamos a imagem na qual ele se basea para criar os contêineres dos *pods*, pois o *ReplicaSet* não cria atomaticamente novos *pods* com a nova imagem fornecida, é necessário excluir cada um dos *pods* do *ReplicaSet*.
+  - Problema do *ReplicaSet* é quando atualizamos a imagem na qual ele se basea para criar os contêineres dos *pods*, pois o *ReplicaSet* não cria automaticamente novos *pods* com a nova imagem fornecida, é necessário excluir cada um dos *pods* do *ReplicaSet*.
   - Para solucionar/contornar o problema do *ReplicaSet* precisamos usar outro objeto do Kubernetes, o *Deployment*.
 - Quando os *Deployments* estão realizando a atualização dos *ReplicaSets* e dos *Pods*, há um tempo de zero *downtime*, ou seja, sua aplicação não ficará fora do ar durante esse período de atualização, pois ela é feita de maneira progressiva.
   - O *ReplicaSet* não será deletado, será criado um novo *ReplicaSet* e o antigo ficará sem nenhum *Pod*, ou seja, ficará vazio.
