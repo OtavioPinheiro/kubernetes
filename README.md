@@ -51,6 +51,7 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 23. [Cert Manager e TLS](#cert-manager-e-tls)
 24. [Instalação do Cert Manager](#instalação-do-cert-manager)
 25. [Namespace](#namespace)
+    1. [Trocando de Namespace](#trocando-de-namespaces)
 26. [Dicas](#dicas)
 27. [Para lembrar](#para-lembrar)
 
@@ -447,6 +448,10 @@ Tabela de comandos do Kubernets
 | `kubectl config get-clusters` | Comando usado para exibir uma list dos *clusters*. |
 | `kubectl config get-contexts` | Comando usado para exibir uma lista dos contextos. |
 | `kubectl config use-context <nome-do-contexto>` | Comando usado para trocar de contextos. |
+| `kubectl config view` | Comando usado para visualizar as configurações. |
+| `kubectl config current-context` | Comando usado para visualizar o nome do contexto atual. |
+| `kubectl config set-context <nome-do-contexto>` | Comando usado para criar um novo contexto. |
+| `kubectl config set-context <nome-do-contexto> --namespace=<nome-do-namespace> --cluster=<nome-do-cluster> --user=<nome-do-user>` | Comando usado para criar um novo contexto, informando o _namespace_, _cluster_ e _user_. |
 | `kind get clusters` | Comando usado para retornar uma lista de *clusters* que estão ativos. |
 | `kind delete clusters <cluster-name>` | Comando usado para deletar *clusters* pelo nome. |
 | `kubectl delete svc <service-name>` | Comando usado para deletar um serviço pelo nome. |
@@ -1197,6 +1202,13 @@ spec:
 ```
 
 Em resumo, os _namespaces_ no Kubernetes são uma ferramenta poderosa para organizar, isolar e gerenciar recursos dentro de um _cluster_. Eles fornecem um mecanismo flexível para dividir o _cluster_ em espaços virtuais separados, cada um com seu próprio escopo e conjunto de recursos, permitindo uma melhor organização, segurança e gerenciamento de recursos em ambientes Kubernetes.
+
+[Voltar para o sumário](#sumário)
+
+## Trocando de Namespaces
+Para trocar de _Namespace_ no Kubernetes basta executar o comando `kubectl config use-context <nome-do-namespace>`. Agora todos os comandos e objetos que serão criados estarão dentro do _namespace_ especificado.
+
+Veja também a tabela de Comandos mais usados (comuns) do Kubernetes, [Comandos do Kubernets e do Kind](#comandos-do-kubernets-e-do-kind).
 
 [Voltar para o sumário](#sumário)
 
