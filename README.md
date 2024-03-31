@@ -44,8 +44,11 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
         2. [ReadWriteMany](#readwritemany-rwx)
         3. [ReadOnlyMany](#readonlymany-rox)
         4. [ReadWriteMany-PodAffinity](#readwritemany-podaffinity-rwx-pa)
-19. [Dicas](#dicas)
-20. [Para lembrar](#para-lembrar)
+19. [Statefulsets](#statefulsets)
+20. [Headless services](#headless-services)
+21. [Ingress](#ingress)
+22. [Dicas](#dicas)
+23. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -984,6 +987,69 @@ Alguns exemplos de uso de _RWX-PA_:
 - **Cache compartilhado**: Um cache de dados compartilhado por vários `pods` em execução no mesmo nó para melhorar o desempenho.
 - **Dados temporários de processamento**: Dados temporários gerados durante um processamento paralelo que precisam ser acessíveis por todos os `pods` envolvidos.
 - **Banco de dados in-memory**: Um banco de dados _in-memory_ que precisa de acesso de baixa latência por vários `pods` no mesmo nó.
+
+[Voltar para o sumário](#sumário)
+
+# Statefulsets
+Um _StatefulSet_ é um recurso no Kubernetes que é usado para gerenciar aplicativos de estado. Enquanto os `pods` em um _Deployment_ **são projetados para serem substituíveis e intercambiáveis**, os `pods` em um _StatefulSet_ **são únicos e mantêm um estado persistente, como identidade de rede, armazenamento e identidade de host**.
+
+Cada `pod` em um _StatefulSet_ recebe um identificador único (id) que persiste durante a vida do `pod`. Isso permite que cada `pod` **mantenha seu próprio estado e identidade**, facilitando a escalabilidade e a recuperação.
+
+Os `pods` em um _StatefulSet_ são criados e escalados de forma sequencial, garantindo que cada `pod` tenha uma ordem definida. Isso é útil para aplicativos que exigem inicialização em uma sequência específica ou que têm dependências entre os `pods`.
+
+Os _StatefulSets_ geralmente são usados em conjunto com serviços de cabeça (_headless service_) para fornecer acesso estável aos `pods` individuais. Um _Headless service_ é um serviço Kubernetes que **fornece um DNS estável** para cada `pod` em um _StatefulSet_, permitindo que outros `pods` os localizem facilmente.
+
+Assim como em um _Deployment_, você pode atualizar a versão de um aplicativo em um _StatefulSet_ usando uma estratégia de atualização controlada. Isso permite que você minimize o tempo de inatividade e garanta uma transição suave para novas versões do aplicativo.
+
+Os `pods` em um _StatefulSet_ geralmente requerem armazenamento persistente para manter seu estado. Isso pode ser fornecido por meio de volumes persistentes ou outros mecanismos de armazenamento suportados pelo Kubernetes.
+
+Os _StatefulSets_ são frequentemente usados para implantar aplicativos de banco de dados, sistemas de mensagens, caches distribuídos e outros aplicativos que requerem persistência e identidade única para cada instância.
+
+No geral, os _StatefulSets_ são uma ferramenta poderosa para implantar e gerenciar aplicativos de estado (_Stateful_) no Kubernetes, fornecendo um equilíbrio entre escalabilidade, confiabilidade e persistência.
+
+[Voltar para o sumário](#sumário)
+
+# Headless services
+Um _Headless Service_ no Kubernetes é um **tipo de serviço que não possui um endereço IP dedicado**. Em vez disso, ele **funciona como um proxy** para um conjunto de `pods`, roteando o tráfego para eles de acordo com as regras de balanceamento de carga.
+
+O _Headless Service_ abstrai os detalhes dos _endpoints_ dos `pods`, como seus endereços IP e portas, da aplicação, facilitando o gerenciamento e a escalabilidade da aplicação, pois é possível adicionar ou remover `pods` sem precisar alterar a configuração do serviço. Esse tipo de serviço também oferece balanceamento de carda integrado para distribuir o tráfego entre os `pods` de forma eficiente. Outros benefícios do _Headless Service_ é o desacoplamento da lógica do serviço da implementação dos pods, tornando a aplicação mais flexível e resiliente a mudanças, além de não ter um endereço público, podendo ser usado para proteger serviços internos que não precisam ser expostos diretamente à internet.
+
+**Casos de uso do Headless Service:**
+
+- **Comunicação entre pods:** Ideal para comunicação entre `pods` dentro do mesmo cluster.
+- **Exposição de serviços internos:** Pode ser usado para expor serviços internos a outros `pods` dentro do _cluster_, sem a necessidade de um endereço IP público.
+- **Integração com bancos de dados:** Pode ser usado para conectar `pods` a um banco de dados, abstraindo o endereço IP e a porta do banco de dados.
+- **Implementação de microsserviços:** É uma ótima opção para implementar microsserviços, pois permite desacoplar os serviços e facilitar o gerenciamento.
+
+**Exemplo de Headless Service:**
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-headless-service
+spec:
+  selector:
+    matchLabels:
+      app: my-app
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+```
+
+Neste exemplo, o serviço `my-headless-service` roteia o tráfego na porta 80 para os pods com a label `app: my-app` na porta 8080. Os pods não precisam ter um endereço IP dedicado, pois o serviço se encarrega de direcionar o tráfego para o pod correto.
+
+[Voltar para o sumário](#sumário)
+
+# Ingress
+O _Ingress_ no Kubernetes é um objeto API que **gerencia o acesso externo aos serviços** em um _cluster_, geralmente por meio do protocolo HTTP. O Ingress pode fornecer balanceamento de carga, terminação SSL e hospedagem virtual baseada em nome.
+
+Um recurso _Ingress_ **é uma coleção de regras de roteamento de tráfego de entrada que definem como os endereços de fora do** _cluster_ **são mapeados para os serviços internos**. Isso permite que você consolide suas regras de roteamento em um único recurso, pois pode conter todas as regras necessárias para um aplicativo específico.
+
+Para que o _Ingress_ funcione, o _cluster_ deve ter um **controlador do _Ingress_** em execução. Este **é um serviço que monitora constantemente os recursos do _Ingress_ e garante que o tráfego de entrada é roteado corretamente**.
+
+Em resumo, o _Ingress_ no Kubernetes é uma maneira poderosa e flexível de **gerenciar o tráfego de entrada para seus serviços**, permitindo que você controle de maneira granular como o tráfego externo é roteado e manipulado.
 
 [Voltar para o sumário](#sumário)
 
