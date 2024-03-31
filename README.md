@@ -439,6 +439,7 @@ Tabela de comandos do Kubernets
 | `kubectl cluster-info --context kind-fullcycle` | Exibe as informações do cluster com o nome (contexto) informado pela flag *context*. |
 | `kubectl config get-clusters` | Comando usado para exibir uma list dos *clusters*. |
 | `kubectl config get-contexts` | Comando usado para exibir uma lista dos contextos. |
+| `kubectl config use-context <nome-do-contexto>` | Comando usado para trocar de contextos. |
 | `kind get clusters` | Comando usado para retornar uma lista de *clusters* que estão ativos. |
 | `kind delete clusters <cluster-name>` | Comando usado para deletar *clusters* pelo nome. |
 | `kubectl delete svc <service-name>` | Comando usado para deletar um serviço pelo nome. |
