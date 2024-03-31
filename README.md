@@ -48,8 +48,10 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 20. [Headless services](#headless-services)
 21. [Ingress](#ingress)
 22. [GKE Google Kubernetes Engine](#gke-google-kubernetes-engine)
-23. [Dicas](#dicas)
-24. [Para lembrar](#para-lembrar)
+23. [Cert Manager e TLS](#cert-manager-e-tls)
+24. [Instalação do Cert Manager](#instalação-do-cert-manager)
+25. [Dicas](#dicas)
+26. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -1131,6 +1133,17 @@ spec:
 Neste exemplo, o `Certificate` `my-certificate` é configurado para usar o `Issuer` `letsencrypt-issuer` e para ser válido para o domínio `www.example.com`.
 
 Em resumo, o **TLS** e o ***Cert-Manager*** desempenham papéis cruciais na garantia da segurança e na simplificação da gestão de certificados no Kubernetes.
+
+[Voltar para o sumário](#sumário)
+
+## Instalação do Cert-Manager
+No site do [cert-manager.io](https://cert-manager.io/docs/installation/) há toda uma documentação bem detalhada, fácil e simples de se entender e de seguir, então basta acessar a documentação e seguir os passos para realizar a instalação. Não há mistérios quanto isso, basta executar o comando `kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.yaml` para aplicar o manifesto do `cert-manager`. Acesse também as fontes descritas a seguir para saber mais sobre as instalações e sobre a compatibilidade com os _clouds providers_, mas no geral recomenda-se utilizar o `Helm` para fazer a instalação do cert-manager por ser mais simples e não gerar tantos problemas.
+
+**FONTES:**
+- [cert-manager - Installation](https://cert-manager.io/docs/installation/)
+- [cert-manager - kubectl apply -> Instalação do cert-manager por meio do kubectl](https://cert-manager.io/docs/installation/kubectl/)
+- [cert-manger - Helm -> Instalação do cert-manager por meio do Helm](https://cert-manager.io/docs/installation/helm/)
+- [Compatibility with Kubernetes Platform Providers](https://cert-manager.io/docs/installation/compatibility/)
 
 [Voltar para o sumário](#sumário)
 
