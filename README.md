@@ -50,8 +50,9 @@ Projeto criado com o objetivo de aprender e estudar o Kubernets.
 22. [GKE Google Kubernetes Engine](#gke-google-kubernetes-engine)
 23. [Cert Manager e TLS](#cert-manager-e-tls)
 24. [Instalação do Cert Manager](#instalação-do-cert-manager)
-25. [Dicas](#dicas)
-26. [Para lembrar](#para-lembrar)
+25. [Namespace](#namespace)
+26. [Dicas](#dicas)
+27. [Para lembrar](#para-lembrar)
 
 # O que é Kubernets?
 Kubernets é um produto Open Source utilizado para automatizar a implantação, o dimensionamento e o gerenciamento de aplicativos em contâiner. O projeto é hospedado por the Cloud Native Computing Foundation([CNCF](https://www.cncf.io/about))
@@ -1146,6 +1147,56 @@ Vale mencionar que pode ser necessário criar um _namespace_ específico apenas 
 - [cert-manager - kubectl apply -> Instalação do cert-manager por meio do kubectl](https://cert-manager.io/docs/installation/kubectl/)
 - [cert-manger - Helm -> Instalação do cert-manager por meio do Helm](https://cert-manager.io/docs/installation/helm/)
 - [Compatibility with Kubernetes Platform Providers](https://cert-manager.io/docs/installation/compatibility/)
+
+[Voltar para o sumário](#sumário)
+
+# Namespace
+***Namespaces*** são uma forma de dividir os recursos de um _cluster_ do Kubernetes entre vários usuários (via `RBAC`), equipes ou projetos. Eles também são uma maneira de dividir recursos de _cluster_ em ambientes isolados.
+
+Cada recurso criado em um _cluster_ do Kubernetes pertence a um _namespace_ específico. Se nenhum _namespace_ for especificado no momento da criação de um recurso, o recurso será criado no _namespace_ `default`.
+
+Os _namespaces_ são particularmente úteis em ambientes com muitos usuários espalhados por vários equipes ou projetos. Por exemplo, você pode ter um _namespace_ `development` para o ambiente de desenvolvimento e um _namespace_ `production` para o ambiente de produção.
+
+Os _namespaces_ também permitem que você controle o acesso aos recursos do Kubernetes. Por exemplo, você pode conceder a um usuário acesso somente leitura ao _namespace_ `production`, mas acesso de gravação ao _namespace_ `development`.
+
+**Portanto podemos listar os benefícios dos _Namespaces_ sendo:**
+
+- **Isolamento Lógico**: Cada _namespace_ atua como um domínio isolado dentro do _cluster_, fornecendo uma camada de isolamento lógico para recursos e objetos. Isso permite que diferentes equipes ou aplicativos compartilhem o mesmo _cluster_ sem interferência mútua.
+
+- **Escopo de Rede**: Os _namespaces_ têm seu próprio escopo de rede, o que significa que os `pods` dentro de um namespace podem se comunicar entre si, mas são isolados dos `pods` em outros _namespaces_, a menos que explicitamente configurado de outra forma.
+
+- **Gerenciamento de Recursos**: Os _namespaces_ podem ser usados para atribuir cotas de recursos, como CPU e memória, a grupos específicos de recursos dentro do _cluster_. Isso ajuda a garantir que os recursos sejam distribuídos de forma justa e equitativa entre os diferentes _namespaces_.
+
+- **Organização e Segregação**: Os _namespaces_ fornecem uma maneira de organizar e segmentar recursos dentro do _cluster_ com base em diferentes equipes, ambientes (como produção, desenvolvimento e teste) ou aplicativos. Isso facilita o gerenciamento e a manutenção do _cluster_, permitindo uma maior granularidade de controle e visibilidade.
+
+- **Personalização de Políticas**: Políticas de segurança e rede podem ser aplicadas em nível de _namespace_, permitindo que as equipes personalizem as configurações de segurança e rede de acordo com suas necessidades específicas. Isso permite uma maior flexibilidade e controle sobre as políticas de segurança em todo o _cluster_.
+
+Para criar um _namespace_ basta executar o comando `kubectl create namespace <nome-do-namespace>` e para criar _services_, _deployments_ ou qualquer objeto kubernetes dentro de um _namespace_ específico, basta informar o nome do _namespace_ após a _flag_ `-n=<nome-do-namespace>` ou `--namespace=<nome-do-namespace>`, como por exemplo: `kubectl apply -f k8s/deployment.yaml -n=dev`, neste caso o _deployment_ será aplicado ao _namespace_ `dev`. Ou ainda é possível definir o _namespace_ dentro do manifesto (arquivo .yaml), dentro da propriedade `namespace` da propriedade `metadata`, assim como ilustra o exemplo a seguir:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meu-deployment
+  namespace: meu-namespace
+spec:
+  selector:
+    matchLabels:
+      app: minha-aplicacao
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: minha-aplicacao
+    spec:
+      containers:
+      - name: minha-aplicacao
+        image: minha-imagem
+        ports:
+        - containerPort: 8080
+```
+
+Em resumo, os _namespaces_ no Kubernetes são uma ferramenta poderosa para organizar, isolar e gerenciar recursos dentro de um _cluster_. Eles fornecem um mecanismo flexível para dividir o _cluster_ em espaços virtuais separados, cada um com seu próprio escopo e conjunto de recursos, permitindo uma melhor organização, segurança e gerenciamento de recursos em ambientes Kubernetes.
 
 [Voltar para o sumário](#sumário)
 
