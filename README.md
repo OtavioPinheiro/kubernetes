@@ -1087,6 +1087,53 @@ Feito isso, crie o arquivo `ingress.yaml` e aplique-o com o `kubectl apply -f <n
 
 [Voltar para o sumário](#sumário)
 
+# Cert Manager e TLS
+_Transport Layer Security_ (TLS) **é um protocolo de segurança que fornece comunicação segura pela** _Internet_. Ele **garante que os dados transmitidos entre um cliente e um servidor sejam criptografados e autenticados, protegendo contra interceptação e manipulação por parte de terceiros mal-intencionados**, como ataques _Man-In-The-Middle_. No contexto do Kubernetes, o TLS desempenha um papel fundamental na proteção das comunicações entre os diversos componentes do _cluster_, como os `pods`, serviços e _API server_.
+
+O _Cert Manager_ **é uma ferramenta para automação de gerenciamento de certificados TLS no Kubernetes**. Ele **simplifica o processo de emissão, renovação e revogação de certificados, tornando mais fácil a implementação de uma política de segurança robusta baseada em TLS**. O _Cert Manager_ integra-se com provedores de autoridade de certificação (CA) externos, como ***Let's Encrypt***, ***Venafi***, ***HashiCorp Vault***, entre outros, para emitir certificados automaticamente e garantir que eles estejam sempre atualizados e válidos.
+
+A integração do _Cert Manager_ com o Kubernetes é feita por meio de recursos personalizados, como o ***CustomResourceDefinition*** (CRD). Isso permite que os usuários definam objetos chamados ***Certificate*** e ***Issuer/ClusterIssuer*** para solicitar certificados e configurar a política de emissão, respectivamente. O _Cert Manager_ monitora esses objetos e automatiza o processo de emissão e renovação de certificados conforme necessário.
+
+**Como usar o _Cert Manager_:**
+
+Para usar o _Cert Manager_, você precisa instalar o operador _Cert Manager_ em seu _cluster_ Kubernetes. Depois de instalar o operador, você pode criar recursos `Issuer` e `Certificate` para definir como os certificados TLS serão emitidos e gerenciados.
+
+**Exemplo de Issuer:**
+
+```yaml
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-issuer
+spec:
+  letsencrypt:
+    email: your-email@example.com
+    provider: https://acme-v02.api.letsencrypt.org/
+```
+
+Neste exemplo, o `Issuer` `letsencrypt-issuer` é configurado para usar o ***Let's Encrypt*** como CA.
+
+**Exemplo de Certificate:**
+
+```yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: my-certificate
+spec:
+  secretName: my-certificate-secret
+  issuerRef:
+    name: letsencrypt-issuer
+  dnsNames:
+  - www.example.com
+```
+
+Neste exemplo, o `Certificate` `my-certificate` é configurado para usar o `Issuer` `letsencrypt-issuer` e para ser válido para o domínio `www.example.com`.
+
+Em resumo, o **TLS** e o ***Cert-Manager*** desempenham papéis cruciais na garantia da segurança e na simplificação da gestão de certificados no Kubernetes.
+
+[Voltar para o sumário](#sumário)
+
 # Dicas
 As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um serviço, `pod`, _deployments_, etc. Para verificar os logs de erros e/ou tentar realizar o processo de *debug* existem alguns comandos mais usados para auxiliar nesta tarefa. Os comandos mais usados para se obter informações de `pods` são:
 - `kubectl logs <nome-do-pod>`
