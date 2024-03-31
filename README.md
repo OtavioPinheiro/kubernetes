@@ -1139,6 +1139,8 @@ Em resumo, o **TLS** e o ***Cert-Manager*** desempenham papéis cruciais na gara
 ## Instalação do Cert-Manager
 No site do [cert-manager.io](https://cert-manager.io/docs/installation/) há toda uma documentação bem detalhada, fácil e simples de se entender e de seguir, então basta acessar a documentação e seguir os passos para realizar a instalação. Não há mistérios quanto isso, basta executar o comando `kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.yaml` para aplicar o manifesto do `cert-manager`. Acesse também as fontes descritas a seguir para saber mais sobre as instalações e sobre a compatibilidade com os _clouds providers_, mas no geral recomenda-se utilizar o `Helm` para fazer a instalação do cert-manager por ser mais simples e não gerar tantos problemas.
 
+Vale mencionar que pode ser necessário criar um _namespace_ específico apenas para os certificados **antes de realizar a instalação**, então execute o comando: `kubectl create namespace cert-manager`
+
 **FONTES:**
 - [cert-manager - Installation](https://cert-manager.io/docs/installation/)
 - [cert-manager - kubectl apply -> Instalação do cert-manager por meio do kubectl](https://cert-manager.io/docs/installation/kubectl/)
