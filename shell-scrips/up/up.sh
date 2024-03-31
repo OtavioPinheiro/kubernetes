@@ -6,12 +6,12 @@ kind create cluster --config=k8s/kind.yaml --name=fullcycle &&
 kubectl cluster-info --context kind-fullcycle &&
 echo
 read -p "Qual deployment deseja aplicar?" deployment
-if [ -f "$(pwd)/k8s/deployment-variables-$deployment.yaml" ]; then
+if [ -f "$(pwd)/k8s/deployment-$deployment.yaml" ]; then
     echo "Subindo deployment" &&
-    kubectl apply -f k8s/deployment-variables-$deployment.yaml
+    kubectl apply -f k8s/deployment-$deployment.yaml
 else
     echo "Arquivo deployment não existe"
-    echo "deployment-variables-$deployment.yaml"
+    echo "deployment-$deployment.yaml"
     echo "Aplicando o arquivo deployment padrão ..."
     kubectl apply -f k8s/deployment.yaml
 fi

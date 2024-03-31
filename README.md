@@ -448,6 +448,8 @@ Tabela de comandos do Kubernets
 | `kubectl get services` | Comando usado para retornar uma lista de serviços. |
 | `kubectl get pod` | Comando usado para retornar uma lista dos *pods* sendo executados. |
 | `kubectl get pods` | Comando usado para retornar uma lista dos *pods* sendo executados. |
+| `kubectl get pvc` | Comando usado para retornar uma lista dos *pvcs (PersistentVolumeClaims)* sendo executados. |
+| `kubectl get storageclass` | Comando usado para retornar uma lista dos *storageclass* sendo executados. |
 | `kubectl rollout history <object-type> <object-name>` | Verifica o histórico do objeto Kubernetes especificado, incluindo revisões, pelo nome. |
 | `kubectl rollout history deployment goserver` | Verifica o histórico dos *Deployments* incluindo revisões. |
 | `kubectl rollout undo deployment <nome-do-deploy>` | Retorna para a última versão do *Deployment*. |
