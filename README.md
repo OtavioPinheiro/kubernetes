@@ -450,6 +450,8 @@ Tabela de comandos do Kubernets
 | `kubectl config use-context <nome-do-contexto>` | Comando usado para trocar de contextos. |
 | `kubectl config view` | Comando usado para visualizar as configurações. |
 | `kubectl config current-context` | Comando usado para visualizar o nome do contexto atual. |
+| `kubectl config view --minify \| grep namespace:` | Comando usado para visualizar o nome do _namespace_ atual. |
+| `kubectl config set-context --current --namespace=<nome-do-namespace>` | Comando usado para trocar de _namespace_. |
 | `kubectl config set-context <nome-do-contexto>` | Comando usado para criar um novo contexto. |
 | `kubectl config set-context <nome-do-contexto> --namespace=<nome-do-namespace> --cluster=<nome-do-cluster> --user=<nome-do-user>` | Comando usado para criar um novo contexto, informando o _namespace_, _cluster_ e _user_. |
 | `kind get clusters` | Comando usado para retornar uma lista de *clusters* que estão ativos. |
@@ -1206,7 +1208,7 @@ Em resumo, os _namespaces_ no Kubernetes são uma ferramenta poderosa para organ
 [Voltar para o sumário](#sumário)
 
 ## Trocando de Namespaces
-Para trocar de _Namespace_ no Kubernetes basta executar o comando `kubectl config use-context <nome-do-namespace>`. Agora todos os comandos e objetos que serão criados estarão dentro do _namespace_ especificado.
+Para trocar de _Namespace_ no Kubernetes basta executar o comando `kubectl config set-context --current --namespace=<nome-do-namespace>`. Agora todos os comandos e objetos que serão criados estarão dentro do _namespace_ especificado. Use `kubectl config view --minify | grep namespace:` para o nome do _namespace_ atual antes de trocar, pois caso queira voltar para o _namespace_ padrão será necessário saber o nome.
 
 Veja também a tabela de Comandos mais usados (comuns) do Kubernetes, [Comandos do Kubernets e do Kind](#comandos-do-kubernets-e-do-kind).
 
