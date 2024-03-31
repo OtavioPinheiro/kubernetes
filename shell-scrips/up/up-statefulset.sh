@@ -30,7 +30,7 @@ else
     exit 0
 fi
 echo "Aplicando o StateFulSet"
-if [ -f "$(pwd)/k8s/statefulset.yaml" ]; then
+if [ -f "$(pwd)/k8s/statefulset-2.yaml" ]; then
     echo "Subindo deployment" &&
     kubectl apply -f k8s/statefulset.yaml
 else
