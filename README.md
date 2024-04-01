@@ -1214,8 +1214,149 @@ Veja também a tabela de Comandos mais usados (comuns) do Kubernetes, [Comandos 
 
 [Voltar para o sumário](#sumário)
 
+# Service Accounts
+_Service Accounts_ são um tipo de objeto no Kubernetes que são destinados a serem usados por processos que rodam em um Pod. Em outras palavras, é um recurso que fornece uma identidade para um pod. Ele funciona como uma conta de usuário dedicada para o pod, permitindo que ele se autentique e se autorize para acessar recursos do _cluster_ ou APIs externas.
+
+Por padrão, um Pod não tem permissões para interagir com a API do Kubernetes. No entanto, um Pod que precisa interagir com a API do Kubernetes pode fazer isso através de uma _Service Account_.
+
+Quando você cria uma _Service Account_, o Kubernetes cria um par de chaves secretas (uma chave privada e uma chave pública) e armazena a chave privada como um ***Secret*** no _cluster_. A chave pública é vinculada à _Service Account_ e pode ser usada para verificar _tokens_.
+
+A _Service Account_ pode ser vinculada a um ou mais _Roles_ ou _ClusterRoles_ através de um _RoleBinding_ ou _ClusterRoleBinding_, respectivamente. Isso permite que você conceda permissões específicas à _Service Account_.
+
+**Como funcionam os Service Accounts?**
+
+- **Criação**: Você cria um _Service Account_ usando o comando `kubectl create serviceaccount` ou definindo um recurso `ServiceAccount` em um arquivo YAML.
+- **Associação ao Pod**: Durante a criação do `pod`, você especifica o nome do _Service Account_ que ele deve usar. Isso pode ser feito por meio da flag `--serviceaccount` no comando `kubectl run` ou definindo o campo `serviceAccountName` no arquivo de especificação do `pod` (YAML).
+- **Montagem do Volume**: Quando o `pod` é iniciado, o Kubernetes automaticamente monta o volume contendo o _token_ do _Service Account_.
+- **Autenticação**: O `pod` usa o _token_ do _Service Account_ para se autenticar no servidor API do Kubernetes ou em APIs externas que suportam autenticação baseada em _token_.
+- **Autorização**: O servidor API verifica as permissões associadas ao _Service Account_ para determinar se o `pod` tem permissão para acessar o recurso solicitado.
+
+**Vantagens do uso de _Service Accounts_:**
+
+- **Segurança**: _Service Accounts_ fornecem uma identidade separada para cada `pod`, o que ajuda a limitar o impacto de uma brecha de segurança.
+- **Gerenciamento de acesso**: Você pode controlar o acesso aos recursos do _cluster_ definindo permissões para _Service Accounts_ usando ***Role-Based Access Control (RBAC)***.
+- **Padronização**: _Service Accounts_ facilitam o gerenciamento de acesso para `pods`, pois você pode definir permissões em um único lugar e aplicá-las a vários `pods` usando o mesmo _Service Account_.
+
+**Casos de uso de _Service Accounts_:**
+
+- **Acesso a serviços do cluster**: `Pods` podem usar _Service Accounts_ para acessar serviços como bancos de dados, _caches_ ou serviços de mensagens executados no _cluster_.
+- **Acesso a APIs externas**: `Pods` podem usar _Service Accounts_ para autenticar e acessar APIs externas que suportam autenticação baseada em token.
+- **Integração com sistemas externos**: _Service Accounts_ podem ser usados para integrar `pods` com sistemas externos que requerem autenticação.
+
+Em resumo, as _Service Accounts_ são uma parte essencial da segurança e da gestão de identidade no Kubernetes, garantindo que apenas aplicativos autorizados tenham permissão para acessar recursos dentro do ambiente Kubernetes. Elas permitem que você controle o acesso à API do Kubernetes em um nível granular, o que é crucial para a operação segura de aplicações complexas.
+
+[Voltar para o sumário](#sumário)
+
+# Roles e ClusterRoles no Kubernetes
+No Kubernetes, ***Roles*** e ***ClusterRoles*** desempenham um papel fundamental na definição de permissões e acesso aos recursos dentro de um _cluster_. Vamos explorar a diferença entre eles e como são utilizados:
+
+## Roles:
+Os `Roles` são objetos do Kubernetes que definem conjuntos de permissões para r**ecursos específicos dentro de um _namespace_**. Eles são usados para **conceder permissões granulares a usuários ou serviços dentro de um _namespace_ específico**. Um _Role_ pode especificar **permissões de leitura, gravação, atualização ou exclusão para recursos como Pods, Services, Deployments, etc**. Essas **permissões** são aplicadas **somente dentro do _namespace_ em que o Role está definido**.
+
+[Voltar para o sumário](#sumário)
+
+## ClusterRoles:
+Por outro lado, os `ClusterRoles` são semelhantes aos `Roles`, mas têm um escopo mais amplo, **aplicando-se a todo o _cluster_ Kubernetes**. Eles definem permissões que se estendem a todos os _namespaces_ no _cluster_. Os `ClusterRoles` são úteis para **conceder permissões globais, como acesso de leitura a todos os `Pods` ou permissões de administração em todo o _cluster_**. Ele concede aos pods a capacidade de realizar ações em recursos do `cluster`, como `nodes`, `endpoints`, `persistent volumes` e outros.
+
+[Voltar para o sumário](#sumário)
+
+## Diferenças básicas entre Role e ClusterRole
+
+| Característica | Role | ClusterRole |
+|----------------|------|-------------|
+| Âmbito | Namespace único | Cluster completo |
+| Recursos | Pods, deployments, serviços, volumes, etc. | Nodes, endpoints, persistent volumes, etc. |
+| Exemplo | Permitir que pods leiam e escrevam em um ConfigMap específico. | Permitir que pods criem novos pods em qualquer namespace. |
+
+**Exemplos de Role:**
+
+Um `Role` é usado para definir permissões em um _namespace_ específico.
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: my-namespace
+  name: my-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+```
+
+**Neste exemplo:**
+- O `Role` `my-role` é definido no _namespace_ `my-namespace`.
+- Ele concede permissões de leitura para os recursos `pods` no _namespace_ `my-namespace`.
+
+Vinculando um `Role` a um usuário:
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: my-role-binding
+  namespace: my-namespace
+subjects:
+- kind: User
+  name: my-user
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: my-role
+  apiGroup: rbac.authorization.k8s.io
+```
+
+Neste exemplo, o `Role` `my-role` é vinculado ao usuário `my-user` no _namespace_ `my-namespace`, concedendo ao usuário as permissões definidas no `Role`.
+
+**Exemplo de ClusterRole:**
+
+Um `ClusterRole` é usado para definir permissões em todo o _cluster_.
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: my-cluster-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+```
+
+Neste exemplo:
+- O `ClusterRole` `my-cluster-role` é definido para todo o _cluster_.
+- Ele concede permissões de leitura para os recursos `pods` em todos os _namespaces_ do _cluster_.
+
+Vinculando um `ClusterRole` a um serviço:
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: my-cluster-role-binding
+subjects:
+- kind: ServiceAccount
+  name: my-service-account
+  namespace: my-namespace
+roleRef:
+  kind: ClusterRole
+  name: my-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+```
+
+Neste exemplo, o `ClusterRole` `my-cluster-role` é vinculado à `ServiceAccount` `my-service-account` em todos os _namespaces_ do _cluster_, concedendo à `ServiceAccount` as permissões definidas no `ClusterRole`.
+
+### Uso e Aplicação:
+- Os `Roles` e `ClusterRoles` são associados aos `Subjects` (como usuários, grupos ou serviços) por meio de `RoleBindings` e `ClusterRoleBindings`, respectivamente.
+- Ao definir `Roles` e `ClusterRoles`, é importante seguir o **princípio do menor privilégio**, concedendo apenas as permissões necessárias para cada entidade.
+- A combinação adequada de `Roles` e `ClusterRoles` com `RoleBindings` e `ClusterRoleBindings` ajuda a garantir a segurança e a governança adequadas dentro do cluster Kubernetes.
+
+Em resumo, `Roles` e `ClusterRoles` no Kubernetes desempenham um papel crucial na gestão de permissões e acesso aos recursos, permitindo uma configuração precisa e segura das políticas de segurança dentro do _cluster_. Ao compreender e utilizar adequadamente esses recursos, os administradores podem garantir um ambiente Kubernetes bem gerenciado e protegido.
+
+[Voltar para o sumário](#sumário)
+
 # Dicas
-As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um serviço, `pod`, _deployments_, etc. Para verificar os logs de erros e/ou tentar realizar o processo de *debug* existem alguns comandos mais usados para auxiliar nesta tarefa. Os comandos mais usados para se obter informações de `pods` são:
+As vezes podem ocorrer problemas durante a execução do Kubernetes, seja de um serviço, `pod`, _deployments_, etc. Para verificar os _logs_ de erros e/ou tentar realizar o processo de *debug* existem alguns comandos mais usados para auxiliar nesta tarefa. Os comandos mais usados para se obter informações de `pods` são:
 - `kubectl logs <nome-do-pod>`
 - `kubectl describe <nome-do-pod>`
 
