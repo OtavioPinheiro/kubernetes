@@ -469,6 +469,9 @@ Tabela de comandos do Kubernets
 | `kubectl get services` | Comando usado para retornar uma lista de serviços. |
 | `kubectl get pod` | Comando usado para retornar uma lista dos *pods* sendo executados. |
 | `kubectl get pods` | Comando usado para retornar uma lista dos *pods* sendo executados. |
+| `kubectl get pods -l app=<nome-do-app>` | Comando usado para retornar uma lista dos *pods* sendo executados filtrando pela _label_, onde `app` seja igual ao nome informado. |
+| `kubectl get serviceaccounts` | Comando usado para retornar uma lista dos _Services Accounts_ sendo executados. |
+| `kubectl api-resources` | Comando usado para exibir uma lista com as informações dos recursos do Kubernetes. |
 | `kubectl get pvc` | Comando usado para retornar uma lista dos *pvcs (PersistentVolumeClaims)* sendo executados. |
 | `kubectl get storageclass` | Comando usado para retornar uma lista dos *storageclass* sendo executados. |
 | `kubectl rollout history <object-type> <object-name>` | Verifica o histórico do objeto Kubernetes especificado, incluindo revisões, pelo nome. |
